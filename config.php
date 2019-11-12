@@ -21,6 +21,8 @@ define('VERSION', time());
 define('USER_ID', session_id());
 // Path to store all user logs.
 define('LOGS_DIR', './logs');
+// Path to read datasets.
+define('DATA_DIR', './data');
 // File to write the swipe events.
 define('USER_EVENTS_FILE', LOGS_DIR.'/'.USER_ID.'.log');
 // File to write the users' metadata.

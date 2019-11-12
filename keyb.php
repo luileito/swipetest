@@ -26,10 +26,11 @@ $tokens = explode(' ', $sentence);
 // - one uncommon word
 // - one out-of-vocabulary word
 $tokens = array();
-if (empty($_SESSION['bin1'])) $_SESSION['bin1'] = file('dic-words-2k.txt', FILE_IGNORE_NEW_LINES); // Highly frequent words
-if (empty($_SESSION['bin2'])) $_SESSION['bin2'] = file('dic-words-3k.txt', FILE_IGNORE_NEW_LINES); // Somewhat common words
-if (empty($_SESSION['bin3'])) $_SESSION['bin3'] = file('dic-words-5k.txt', FILE_IGNORE_NEW_LINES); // Infrequent words
-if (empty($_SESSION['bin4'])) $_SESSION['bin4'] = file('oov-words.txt', FILE_IGNORE_NEW_LINES);    // Out of vocabulary words
+// Maybe define these files in `config.php` but then anybody accessing ANY of the URLs will allocate too much data unnecesarily.
+if (empty($_SESSION['bin1'])) $_SESSION['bin1'] = file(DATA_DIR.'/dic-words-2k.txt', FILE_IGNORE_NEW_LINES); // Highly frequent words
+if (empty($_SESSION['bin2'])) $_SESSION['bin2'] = file(DATA_DIR.'/dic-words-3k.txt', FILE_IGNORE_NEW_LINES); // Somewhat common words
+if (empty($_SESSION['bin3'])) $_SESSION['bin3'] = file(DATA_DIR.'/dic-words-5k.txt', FILE_IGNORE_NEW_LINES); // Infrequent words
+if (empty($_SESSION['bin4'])) $_SESSION['bin4'] = file(DATA_DIR.'/oov-words.txt', FILE_IGNORE_NEW_LINES);    // Out of vocabulary words
 
 foreach (array('bin1', 'bin2', 'bin3', 'bin4') as $bin) {
     do {
