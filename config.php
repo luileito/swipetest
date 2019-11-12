@@ -1,8 +1,10 @@
 <?php
 session_start();
 
-// We need a sentence counter and also keep track of the individual words entered.
+// We need a sentence counter, both at the session level and for all sessions.
+// We also need to keep track of the individual words entered so far.
 if (!isset($_SESSION['done_count'])) $_SESSION['done_count'] = 0;
+if (!isset($_SESSION['prev_count'])) $_SESSION['prev_count'] = 0;
 if (!isset($_SESSION['done_words'])) $_SESSION['done_words'] = array();
 
 /*
@@ -31,8 +33,9 @@ define('USER_METADATA_FILE', LOGS_DIR.'/'.USER_ID.'.json');
 // NB: Each line will contain a hashed sentence, not plain text.
 define('USER_SENTENCES_FILE', LOGS_DIR.'/'.USER_ID.'.txt');
 // Number of sentences each user should do in a session.
-define('MAX_NUM_SENTENCES', 2);
+define('MAX_NUM_SENTENCES', 5);
 // Add at least one trial sentence, so that users can get familizarized with the look and feel of the keyboard.
+// For returning users, we can log ALL sentences.
 define('NUM_TRIAL_SENTENCES', 1);
 // Number of estimated minutes for taking the test.
 // It should be proportional to the number of sentences and their length.

@@ -8,19 +8,24 @@ if (!empty($_POST['events'])) {
     $word = filter_var($_POST['word'], FILTER_SANITIZE_STRING);
     $_SESSION['done_words'][] = $word;
 
-    // Increase sentence counter only when all words have been submitted.
-    $finished = filter_var($_POST['isDone'], FILTER_VALIDATE_BOOLEAN);
-    if ($finished) {
-        /*
-        // Notice: we receive a *sentence hash*, not a plain-text sentence.
-        $sentence = filter_var($_POST['sentence'], FILTER_SANITIZE_STRING);
-        file_put_contents(USER_SENTENCES_FILE, $sentence.PHP_EOL, FILE_APPEND);
-        */
-        $_SESSION['done_count']++;
+    if (isset($_POST['isDone'])) {
+        // Increase sentence counter only when all words have been submitted.
+        $finished = filter_var($_POST['isDone'], FILTER_VALIDATE_BOOLEAN);
+        if ($finished) {
+            /*
+            // Notice: we receive a *sentence hash*, not a plain-text sentence.
+            $sentence = filter_var($_POST['sentence'], FILTER_SANITIZE_STRING);
+            file_put_contents(USER_SENTENCES_FILE, $sentence.PHP_EOL, FILE_APPEND);
+            */
+            $_SESSION['done_count']++;
+            $_SESSION['prev_count']++;
+        }
     }
 
     // Ignore trial sentences, since they're typically outliers.
-    if ($_SESSION['done_count'] > NUM_TRIAL_SENTENCES) {
+    // Notice that `done_count` is used on the session-level,
+    // whereas `prev_count` takes into account ALL the previous sessions.
+    if ($_SESSION['prev_count'] > NUM_TRIAL_SENTENCES) {
         $events = json_decode($_POST['events']);
         $entries = '';
         foreach($events as $event) {

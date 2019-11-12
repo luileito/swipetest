@@ -1,6 +1,7 @@
 <?php require_once 'config.php'; ?>
 <?php
 // Refresh session data.
+// Don't reset `prev_count` since we want to log ALL sentences from returning users.
 $_SESSION['done_count'] = 0;
 $_SESSION['done_words'] = array();
 
