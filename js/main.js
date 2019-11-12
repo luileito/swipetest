@@ -470,7 +470,7 @@ $(function(){
 
   // Prevent autohiding the address bar and disallow scrolling on the page.
   window.addEventListener('load', function(e) { window.scrollTo(0, 0); });
-  document.body.addEventListener('touchmove', function(e) { e.preventDefault(); });
+  document.body.addEventListener('touchmove', function(e) { e.preventDefault(); }, { passive: false });
 
 
   $keyboard
