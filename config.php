@@ -40,6 +40,10 @@ define('MAX_EST_MINUTES', 3);
 // When there are no more sentences to display, the user will be shown the "done" view.
 define('NUM_TODO_SENTENCES', MAX_NUM_SENTENCES + NUM_TRIAL_SENTENCES - $_SESSION['done_count']);
 
+// Ensure that dirs exist.
+if (!file_exists(DATA_DIR)) die(sprintf(_('Not found: %s'), DATA_DIR));
+if (!file_exists(LOGS_DIR)) mkdir(LOGS_DIR);
+
 /**
  * Shorthand for echo'ing a localized string.
  * @param {string} $msg Message to print.
