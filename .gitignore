@@ -1,0 +1,8 @@
+*~
+.*
+logs/
+feedback.txt
+*.ign
+*.bak
+*.log
+*.old

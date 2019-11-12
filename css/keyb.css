@@ -1,0 +1,55 @@
+* {
+  padding: 0;
+  margin: 0;
+  box-sizing: border-box;
+}
+canvas {
+  image-rendering: crisp-edges;
+}
+html,
+body,
+.global,
+.container {
+  width: 100%;
+  height: 100%;
+  background-color: #EEE;
+  margin-top: 0;
+  overflow: hidden;
+}
+.info {
+  padding: 0.5em;
+  border-bottom: 2px solid #555;
+  background-color: #FFF;
+}
+.keyboard {
+  cursor: pointer;
+  cursor: hand;
+  user-select: none;
+  -moz-user-select: none;
+  -webkit-user-select: none;
+  position: absolute;
+  bottom: 0;
+}
+.sentence,
+.message {
+  font: bold 1.5em sans-serif;
+}
+.message {
+  white-space: pre-wrap;
+  padding: 0.25em;
+}
+.highlighted {
+  color: #CCC;
+}
+.todo {
+  color: #999;
+}
+.current {
+  color: black;
+}
+.wrong {
+  color: red;
+}
+.done {
+  color: blue;
+}
