@@ -65,11 +65,13 @@ if (!empty($_POST)) {
           <li>
             <?php echo sprintf(_('The test will take about %d minutes of your time.'), MAX_EST_MINUTES); ?>
             <?php echo sprintf(_('You will be presented with %d short sentences, one by one.'), MAX_NUM_SENTENCES + NUM_TRIAL_SENTENCES); ?>
+            <i>
             <?php echo ngettext(
               'The first sentence is a warm-up sentence to familiarize yourself with the test.',
               sprintf('The first %d sentences are warm-up sentences to familiarize yourself with the test.', NUM_TRIAL_SENTENCES),
               NUM_TRIAL_SENTENCES
             ); ?>
+            </i>
             <?php _e('You have to swipe each word on a custom virtual keyboard as fast and as accurately as possible.'); ?>
           </li>
           <li>
@@ -426,9 +428,12 @@ if (!empty($_POST)) {
               <option value="Sometimes"><?php _e('Sometimes'); ?></option>
               <option value="Never"><?php _e('Never'); ?></option>
             </select>
-            <span class="moreinfo text-muted">
-            <?php echo sprintf(_('Oh! Then please <a href="%s">watch this video</a> first.'), 'https://www.youtube.com/watch?v=7cTOl6MzWd4'); ?>
-            </span>
+            <div class="moreinfo mt-2">
+              <p class="alert alert-warning">
+                <?php echo sprintf(_('Oh! If you have never swiped before, please <a href="%s">watch this video</a> first.'),
+                  'https://www.youtube.com/watch?v=7cTOl6MzWd4'); ?>
+              </p>
+            </div>
           </div>
         </div>
 
