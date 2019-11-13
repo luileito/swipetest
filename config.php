@@ -84,7 +84,7 @@ function time_distribution($glob) {
 
     $out = shell_exec($cmd);
     $values = explode(PHP_EOL, trim($out));
-    return array_map(floatval, $values);
+    return array_map('floatval', $values);
 }
 
 /**
@@ -110,7 +110,7 @@ function error_distribution($glob) {
 
     $out = shell_exec($cmd);
     $values = explode(PHP_EOL, trim($out));
-    return array_map(floatval, $values);
+    return array_map('floatval', $values);
 }
 
 /**
@@ -123,6 +123,7 @@ function find_position($values, $value) {
     if (is_array($value)) $value = $value[0];
 
     $index = array_search($value, $values);
+    if ($index === FALSE) return 0;
     return $index;
 }
 
