@@ -47,7 +47,7 @@
       <?php echo sprintf(_('You swipe faster than %d%% of all people'), 100 - $time_percentile); ?>
       </h4>
       <p>
-      <?php echo sprintf(_('Your average swipe time is %.2f seconds per word.'), $user_time[0]/1000); ?>
+      <?php echo sprintf(_('Your average swipe time is %.2f seconds per word.'), $user_time[0]); ?>
       <?php
       $best_time_performers = (count($all_times) - 1) * $time_percentile/100;
       echo sprintf(_('Overall, %d users did better than you.'), $best_time_performers);
