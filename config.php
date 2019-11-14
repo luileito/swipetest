@@ -123,7 +123,7 @@ function find_position($values, $value) {
     if (is_array($value)) $value = $value[0];
 
     $index = array_search($value, $values);
-    if ($index === FALSE) return 0;
+    if ($index === FALSE) return -1;
     return $index;
 }
 
