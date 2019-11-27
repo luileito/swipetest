@@ -10,9 +10,8 @@ if (empty($comment)) {
 }
 
 $mark = date('r');
-$contents  = 'BEGIN_MSG '.$mark.PHP_EOL;
-$contents .= $comment.PHP_EOL;
-$contents .= 'END_MSG'.PHP_EOL.PHP_EOL;
+$contents  = 'Date: '.$mark.PHP_EOL;
+$contents .= $comment.PHP_EOL.PHP_EOL;
 file_put_contents('feedback.txt', $contents, FILE_APPEND);
 ?>
 <!doctype html>
