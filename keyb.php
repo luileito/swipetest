@@ -53,9 +53,11 @@ shuffle($tokens);
 <html>
   <head>
     <meta name="viewport" content="width=device-width, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+    <link rel="stylesheet" type="text/css" href="css/bootstrap.min.css?v=<?php echo VERSION; ?>" />
     <link rel="stylesheet" type="text/css" href="css/common.css?v=<?php echo VERSION; ?>" />
     <link rel="stylesheet" type="text/css" href="css/keyb.css?v=<?php echo VERSION; ?>" />
     <script type="text/javascript" src="js/vendor/jquery-2.0.2.min.js"></script>
+    <script type="text/javascript" src="js/vendor/bootstrap.min.js"></script>
     <script type="text/javascript" src="js/keyboard-impl.js?v=<?php echo VERSION; ?>"></script>
     <script type="text/javascript" src="js/main.js?v=<?php echo VERSION; ?>"></script>
   </head>
@@ -65,12 +67,11 @@ shuffle($tokens);
         <img src="img/swipe-test-logo.png" alt="Swipe test logo" class="logo" />
 
         <p class="instructions">
-          <i>
-            <?php echo sprintf(_('%s more sentences to go!'), NUM_TODO_SENTENCES); ?>
-          </i>
-        </p>
+          <?php echo sprintf(_('%s more sentences to go!'), NUM_TODO_SENTENCES); ?>
+          <a href="#feedback">Report an issue</a>
 
-        <p class="instructions mb">
+          <br />
+
           <?php _e('Enter these words by swiping on the virtual keyboard below.'); ?>
           <b><?php _e('Try to <i>memorize</i> each word before you type.'); ?></b>
         </p>
@@ -86,5 +87,43 @@ shuffle($tokens);
         <canvas class="keyboard"></canvas>
       </div>
     </div>
+
+    <script>
+    $(function() {
+
+        $('a[href=#feedback]').on('click', function(ev) {
+            ev.preventDefault();
+            $('#feedback').on('shown.bs.modal', function(e) {
+                $(this).find('textarea').focus();
+            }).modal('show');
+        });
+
+    });
+    </script>
+
+    <div class="modal fade" id="feedback" tabindex="-1" role="dialog">
+      <div class="modal-dialog" role="document">
+        <div class="modal-content">
+          <form method="post" action="report.php">
+          <div class="modal-header">
+            <h5 class="modal-title"><?php _e('Feedback'); ?></h5>
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+              <span aria-hidden="true">&times;</span>
+            </button>
+          </div>
+          <div class="modal-body">
+            <p><?php _e('Please describe the issue you have found.'); ?></p>
+            <textarea name="comment" rows="4" style="width:100%" required></textarea>
+            <input type="hidden" name="referer" value="<?php echo urlencode($_SERVER['REQUEST_URI']); ?>" />
+          </div>
+          <div class="modal-footer">
+            <input type="submit" class="btn btn-primary" value="<?php _e('Submit'); ?>" />
+            <button type="button" class="btn btn-secondary" data-dismiss="modal"><?php _e('Close'); ?></button>
+          </div>
+          </form>
+        </div>
+      </div>
+    </div>
+
   </body>
 </html>

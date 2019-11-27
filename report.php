@@ -1,8 +1,11 @@
 <?php require_once 'config.php'; ?>
 <?php
 $comment = filter_var($_POST['comment'], FILTER_SANITIZE_STRING);
+$referer = filter_var(urldecode($_POST['referer']), FILTER_SANITIZE_URL);
+if (empty($referer)) $referer = '/index.php';
+
 if (empty($comment)) {
-    header('Location: index.php');
+    header('Location: '.$referer);
     exit;
 }
 
@@ -22,6 +25,6 @@ file_put_contents('feedback.txt', $contents, FILE_APPEND);
     <div class="container">
       <h1><?php echo _e('Thanks!'); ?></h1>
       <p><?php echo _e('Your feedback will be processed shortly.'); ?></p>
-      <p><a href="index.php"><?php echo _e('Go back'); ?></a></p>
+      <p><a href="<?php echo $referer; ?>"><?php echo _e('Go back'); ?></a></p>
   </body>
 </html>

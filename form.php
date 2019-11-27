@@ -574,7 +574,7 @@ if (!empty($_POST)) {
           </div>
           <div class="modal-body">
             <p><?php _e('Please describe the issue you have found.'); ?></p>
-            <textarea name="comment" rows="4" style="width:100%"></textarea>
+            <textarea name="comment" rows="4" style="width:100%" required></textarea>
           </div>
           <div class="modal-footer">
             <input type="submit" class="btn btn-primary" value="<?php _e('Submit'); ?>" />
