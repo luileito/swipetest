@@ -3,6 +3,9 @@
   margin: 0;
   box-sizing: border-box;
 }
+body {
+  font-family: sans-serif;
+}
 .container {
   margin-top: 1em;
 }
@@ -16,4 +19,10 @@
 }
 .list-indented {
   padding-left: 1em;
+}
+.mt {
+  margin-top: 1em;
+}
+.mb {
+  margin-bottom: 1em;
 }

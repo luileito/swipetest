@@ -33,13 +33,13 @@ define('USER_METADATA_FILE', LOGS_DIR.'/'.USER_ID.'.json');
 // NB: Each line will contain a hashed sentence, not plain text.
 define('USER_SENTENCES_FILE', LOGS_DIR.'/'.USER_ID.'.txt');
 // Number of sentences each user should do in a session.
-define('MAX_NUM_SENTENCES', 5);
+define('MAX_NUM_SENTENCES', 10);
 // Add at least one trial sentence, so that users can get familizarized with the look and feel of the keyboard.
 // For returning users, we can log ALL sentences.
 define('NUM_TRIAL_SENTENCES', 1);
 // Number of estimated minutes for taking the test.
 // It should be proportional to the number of sentences and their length.
-define('MAX_EST_MINUTES', 3);
+define('MAX_EST_MINUTES', 5);
 // When there are no more sentences to display, the user will be shown the "done" view.
 define('NUM_TODO_SENTENCES', MAX_NUM_SENTENCES + NUM_TRIAL_SENTENCES - $_SESSION['done_count']);
 

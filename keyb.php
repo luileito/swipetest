@@ -64,8 +64,17 @@ shuffle($tokens);
       <div class="info">
         <img src="img/swipe-test-logo.png" alt="Swipe test logo" class="logo" />
 
-        <small><i><?php echo sprintf(_('%s more sentences to go!'), NUM_TODO_SENTENCES); ?></i></small>
-        <p class="instructions"><?php _e('Enter these words by swiping on the keyboard:'); ?></p>
+        <p class="instructions">
+          <i>
+            <?php echo sprintf(_('%s more sentences to go!'), NUM_TODO_SENTENCES); ?>
+          </i>
+        </p>
+
+        <p class="instructions mb">
+          <?php _e('Enter these words by swiping on the virtual keyboard below.'); ?>
+          <b><?php _e('Try to <i>memorize</i> each word before you type.'); ?></b>
+        </p>
+
         <h4 class="sentence" data-hash="<?php echo $txt_hash; ?>">
           <?php foreach ($tokens as $tok): ?>
             <span class="todo"><?php echo $tok; ?></span>

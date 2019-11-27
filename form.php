@@ -17,6 +17,7 @@ if (!empty($_POST)) {
         'age' => (int) filter_var($_POST['age'], FILTER_SANITIZE_NUMBER_INT),
         'nationality' => filter_var($_POST['nationality'], FILTER_SANITIZE_STRING),
         'familiarity' => filter_var($_POST['familiarity'], FILTER_SANITIZE_STRING),
+        'englishLevel' => filter_var($_POST['englishLevel'], FILTER_SANITIZE_STRING),
         'dominantHand' => filter_var($_POST['dominantHand'], FILTER_SANITIZE_STRING),
         'swipeHand' => filter_var($_POST['swipeHand'], FILTER_SANITIZE_STRING),
         'swipeFinger' => filter_var($_POST['swipeFinger'], FILTER_SANITIZE_STRING),
@@ -468,6 +469,19 @@ if (!empty($_POST)) {
               <option value="Index"><?php _e('Index'); ?></option>
               <option value="Thumb"><?php _e('Thumb'); ?></option>
               <option value="Other"><?php _e('Other'); ?></option>
+            </select>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label for="englishLevel" class=""><?php _e('What is your knowledge of English language?'); ?></label>
+          <div class="">
+            <select class="form-control" id="englishLevel" name="englishLevel" required>
+              <option value=""></option>
+              <option value="Beginner"><?php _e('Beginner'); ?></option>
+              <option value="Intermediate"><?php _e('Intermediate'); ?></option>
+              <option value="Advanced"><?php _e('Advanced'); ?></option>
+              <option value="Native"><?php _e('Native'); ?></option>
             </select>
           </div>
         </div>
