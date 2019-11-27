@@ -46,7 +46,7 @@ $(function(){
   // Configure the look and feel of keys.
   keyboard.settings.keyCornerRadius = 0;
   keyboard.settings.keyStrokeColor = '#ddd';
-  keyboard.settings.keyFillColor = '#ddd';
+  keyboard.settings.keyFillColor = '#bbb';
   keyboard.settings.keyTextColor = '#000';
   // Configure other rendering options.
   keyboard.settings.cursorSymbol = '❚';
