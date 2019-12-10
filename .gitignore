@@ -1,8 +1,10 @@
 *~
 .*
 logs/
+node_modules/
 feedback.txt
 *.ign
 *.bak
 *.log
 *.old
+*.pyc
