@@ -152,10 +152,11 @@ $(function(){
 //      radius = keyboard.settings.keyFontSize;
 //      ctx.arc(center.x, center.y, radius, 0, 2 * Math.PI);
 //      ctx.fill();
+
 //      // DEBUG: Draw key hitTarget areas.
 //      ctx.beginPath();
 //      ctx.strokeStyle = 'teal';
-//      radius = 1.5 * Math.max(keyboard.settings.keyWidth, keyboard.settings.keyHeight) / 2;
+//      radius = 2.5 * Math.max(keyboard.settings.keyWidth, keyboard.settings.keyHeight) / 2;
 //      ctx.arc(center.x, center.y, radius, 0, 2 * Math.PI);
 //      ctx.stroke();
 
@@ -274,7 +275,7 @@ $(function(){
       var endCenter = getKeyCenter(endKey);
       var iniDist = distance(iniTouch, iniCenter);
       var endDist = distance(endTouch, endCenter);
-      var maxDist = 1.5 * Math.max(keyboard.settings.keyWidth, keyboard.settings.keyHeight) / 2;
+      var maxDist = 2.5 * Math.max(keyboard.settings.keyWidth, keyboard.settings.keyHeight) / 2;
       var isWrong = iniDist > maxDist || endDist > maxDist;
 
       // Edge case: some words begin and start with the same char (e.g. "mum", "rooster")
