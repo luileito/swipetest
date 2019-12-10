@@ -425,8 +425,9 @@ if (!empty($_POST)) {
             <select class="form-control" id="familiarity" name="familiarity" required>
               <option value=""></option>
               <option value="Everyday"><?php _e('Everyday'); ?></option>
-              <!--<option value="Often"><?php _e('Often'); ?></option>-->
+              <option value="Often"><?php _e('Often'); ?></option>
               <option value="Sometimes"><?php _e('Sometimes'); ?></option>
+              <option value="Rarely"><?php _e('Rarely'); ?></option>
               <option value="Never"><?php _e('Never'); ?></option>
             </select>
             <div class="moreinfo mt-2">
