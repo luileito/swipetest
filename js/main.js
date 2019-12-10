@@ -90,13 +90,26 @@ $(function(){
       keyboard.settings.keyFontSize = Math.min(15, Math.round(keyboard.settings.keyWidth / 3));
   }
 
-  function logEvent(evName, pos) {
+  function logEvent(evName, touch) {
       var time = (new Date).getTime()
         , currTok = $sentence.find('.current').text()
         , keyboard_width = $keyboard.width()
         , keyboard_height = $keyboard.height()
         ;
-      evQueue.push([sentenceHash, time, keyboard_width, keyboard_height, evName, pos.x, pos.y, currTok]);
+
+      evQueue.push([
+          sentenceHash,
+          time,
+          keyboard_width,
+          keyboard_height,
+          evName,
+          touch.x,
+          touch.y,
+          touch.rx,
+          touch.ry,
+          touch.angle,
+          currTok
+      ]);
   }
 
   function touchPosition(event) {
@@ -106,6 +119,9 @@ $(function(){
       return {
           x: Math.round(e.clientX - k.offsetLeft)
         , y: Math.round(e.clientY - k.offsetTop)
+        , rx: e.radiusX
+        , ry: e.radiusY
+        , angle: e.rotationAngle
       };
   }
 
