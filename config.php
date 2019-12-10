@@ -3,17 +3,10 @@ session_start();
 
 // We need a sentence counter, both at the session level and for all sessions.
 // We also need to keep track of the individual words entered so far.
-if (!isset($_SESSION['done_count'])) $_SESSION['done_count'] = 0;
-if (!isset($_SESSION['prev_count'])) $_SESSION['prev_count'] = 0;
+if (!isset($_SESSION['done_count'])) $_SESSION['done_count'] = 0; // Num sentences entered within the *current* session
+if (!isset($_SESSION['prev_count'])) $_SESSION['prev_count'] = 0; // Num sentences entered across ALL sessions
 if (!isset($_SESSION['done_words'])) $_SESSION['done_words'] = array();
-
-/*
-// Path to the sentences file used as input stimuli.
-// There should be exactly one sentence per line.
-// Sentences MUST be lowercased, no punctuation symbols, no numbers.
-define('DATA_SENTENCES_FILE', './dataset.txt');
-// **NB Nov 2019: We now use 4-word lists, so this file is no longer used.**
-*/
+if (!isset($_SESSION['rand_count'])) $_SESSION['rand_count'] = 0; // Num sentences entered in the RANDOM condition
 
 // Use `time()` to request a fresh copy of our JS and CSS files (very useful when debugging).
 // Otherwise set to a fixed string, e.g. '1.0.0'.
@@ -29,13 +22,20 @@ define('DATA_DIR', './data');
 define('USER_EVENTS_FILE', LOGS_DIR.'/'.USER_ID.'.log');
 // File to write the users' metadata.
 define('USER_METADATA_FILE', LOGS_DIR.'/'.USER_ID.'.json');
-// File to write the sentences entered by the user.
+// File to write the sentences entered by the user from the MEMORABLE condition.
 // NB: Each line will contain a hashed sentence, not plain text.
 define('USER_SENTENCES_FILE', LOGS_DIR.'/'.USER_ID.'.txt');
+// Path to the MEMORABLE sentences file.
+// One sentence per line, lowercased, no punctuation symbols, no numbers.
+define('DATA_SENTENCES_FILE', DATA_DIR.'/mem200.txt');
 // Number of sentences each user should do in a session.
-define('MAX_NUM_SENTENCES', 10);
+define('MAX_NUM_SENTENCES', 15);
+// Number of sentences composed of random words, pooled from Google's Trillion Corpus.
+// We want the user to enter as much random words as possible, but we need to collect familiar sentences.
+// Thus, the remaining sentences will be pooled from the Enron mobile dataset (MEMORABLE condition).
+define('NUM_RANDOM_SENTENCES', 10);
 // Add at least one trial sentence, so that users can get familizarized with the look and feel of the keyboard.
-// For returning users, we can log ALL sentences.
+// For returning users, we will log ALL sentences.
 define('NUM_TRIAL_SENTENCES', 1);
 // Number of estimated minutes for taking the test.
 // It should be proportional to the number of sentences and their length.

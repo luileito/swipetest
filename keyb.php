@@ -1,53 +1,76 @@
 <?php require_once 'config.php'; ?>
 <?php
-/*
-// User sentences are stored as sha1 hashes.
-$hash_sentences = file(USER_SENTENCES_FILE, FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES);
-// All sentences are assumed to be lowercased, no punctuation, no numbers.
-$data_sentences = file(DATA_SENTENCES_FILE, FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES);
+// The user will enter about one third of the sentences from the Enron mobile dataset,
+// and the remaining two thirds will be random sentences sampled from Google's Trillion Word Corpus.
+// See https://www.keithv.com/software/enronmobile/ and https://github.com/first20hours/google-10000-english
 
-// Pick a sentence at random, ensuring it hasn't been already typed.
-// If the user has completed the full dataset (unlikely but theoretically possible),
-// then pick any sentence at random.
-do {
-    $rand_idx = rand(0, count($data_sentences) - 1);
-    $sentence = $data_sentences[$rand_idx];
-    $txt_hash = sha1($sentence);
-} while (in_array($txt_hash, $hash_sentences) && count($hash_sentences) < count($data_sentences));
+$choices = ['RANDOM', 'MEMORABLE'];
+$_SESSION['condition'] = $choices[random_int(0, count($choices) - 1)];
 
-// We could do some preprocessing here,
-// but it's better to display the dataset as is.
-$tokens = explode(' ', $sentence);
-*/
-
-// Present the user with 4-word sentences, where there is always:
-// - one highly frequent word
-// - one common word
-// - one uncommon word
-// - one out-of-vocabulary word
-$tokens = array();
-// Maybe define these files in `config.php` but then anybody accessing ANY of the URLs will allocate too much data unnecesarily.
-if (empty($_SESSION['bin1'])) $_SESSION['bin1'] = file(DATA_DIR.'/dic-words-2k.txt', FILE_IGNORE_NEW_LINES); // Highly frequent words
-if (empty($_SESSION['bin2'])) $_SESSION['bin2'] = file(DATA_DIR.'/dic-words-3k.txt', FILE_IGNORE_NEW_LINES); // Somewhat common words
-if (empty($_SESSION['bin3'])) $_SESSION['bin3'] = file(DATA_DIR.'/dic-words-5k.txt', FILE_IGNORE_NEW_LINES); // Infrequent words
-if (empty($_SESSION['bin4'])) $_SESSION['bin4'] = file(DATA_DIR.'/oov-words.txt', FILE_IGNORE_NEW_LINES);    // Out of vocabulary words
-
-foreach (array('bin1', 'bin2', 'bin3', 'bin4') as $bin) {
-    do {
-        $rand_idx = rand(0, count($_SESSION[$bin]) - 1);
-        $word = $_SESSION[$bin][$rand_idx];
-    } while (in_array($word, $_SESSION['done_words']));
-    $tokens[] = $word;
+// Ensure that the user enters the expected number of memorable sentences.
+if ($_SESSION['condition'] == 'RANDOM' && $_SESSION['rand_count'] == NUM_RANDOM_SENTENCES) {
+    $_SESSION['condition'] = 'MEMORABLE';
 }
-// This is to keep retro-compatibility with the previous system implementation.
-$txt_hash = sha1(implode(',', $tokens));
 
-// Randomize word order to account for potential confounding factors,
-// e.g. if the last token is always the OOV, the user might write it without effort
-// since s/he already entered 3 words and thus has some "inertia".
-shuffle($tokens);
+// Ensure that the user enters the expected number of random sentences.
+$max_memorable_sentences = MAX_NUM_SENTENCES - NUM_RANDOM_SENTENCES;
+if ($_SESSION['condition'] == 'MEMORABLE' && $_SESSION['done_count'] == $max_memorable_sentences) {
+    $_SESSION['condition'] = 'RANDOM';
+}
 
-//if (isset($_GET['debug'])) var_dump($_SESSION['done_words']);
+
+if ($_SESSION['condition'] == 'RANDOM') {
+    // Present the user with 4-word sentences, where there is always:
+    // - one highly frequent word
+    // - one common word
+    // - one uncommon word
+    // - one out-of-vocabulary word
+    $tokens = array();
+    // Maybe define these files in `config.php` but then anybody accessing ANY of the URLs will allocate too much data unnecesarily.
+    if (empty($_SESSION['bin1'])) $_SESSION['bin1'] = file(DATA_DIR.'/dic-words-2k.txt', FILE_IGNORE_NEW_LINES); // Highly frequent words
+    if (empty($_SESSION['bin2'])) $_SESSION['bin2'] = file(DATA_DIR.'/dic-words-3k.txt', FILE_IGNORE_NEW_LINES); // Somewhat common words
+    if (empty($_SESSION['bin3'])) $_SESSION['bin3'] = file(DATA_DIR.'/dic-words-5k.txt', FILE_IGNORE_NEW_LINES); // Infrequent words
+    if (empty($_SESSION['bin4'])) $_SESSION['bin4'] = file(DATA_DIR.'/oov-words.txt', FILE_IGNORE_NEW_LINES);    // Out of vocabulary words
+
+    foreach (array('bin1', 'bin2', 'bin3', 'bin4') as $bin) {
+        do {
+            $rand_idx = rand(0, count($_SESSION[$bin]) - 1);
+            $word = $_SESSION[$bin][$rand_idx];
+        } while (in_array($word, $_SESSION['done_words']));
+        $tokens[] = $word;
+    }
+    // This is to keep retro-compatibility with the previous system implementation.
+    $txt_hash = sha1(implode(',', $tokens));
+
+    // Randomize word order to account for potential confounding factors,
+    // e.g. if the last token is always the OOV, the user might write it without effort
+    // since s/he already entered 3 words and thus has some "inertia".
+    shuffle($tokens);
+} elseif ($_SESSION['condition'] == 'MEMORABLE') {
+    // User sentences are stored as sha1 hashes.
+    $hash_sentences = file(USER_SENTENCES_FILE, FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES);
+    // All sentences are assumed to be lowercased, no punctuation, no numbers.
+    $data_sentences = file(DATA_SENTENCES_FILE, FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES);
+
+    // Pick a sentence at random, ensuring it hasn't been already entered.
+    // If the user has completed the full memorable dataset (unlikely but theoretically possible),
+    // then pick any sentence at random.
+    do {
+        $rand_idx = rand(0, count($data_sentences) - 1);
+        $sentence = $data_sentences[$rand_idx];
+        $txt_hash = sha1($sentence);
+    } while (in_array($txt_hash, $hash_sentences) && count($hash_sentences) < count($data_sentences));
+
+    // We could do some preprocessing here,
+    // but it's better to display the dataset as it is.
+    // Actually, we removed punctuation symbols and excluded sentences with numbers.
+    // Should we lowercase all sentences as well?
+    $tokens = explode(' ', $sentence);
+} else {
+    // Condition not implemented.
+}
+
+if (isset($_GET['debug'])) var_dump($_SESSION['condition'], $_SESSION['done_count'], $_SESSION['rand_count']);
 ?>
 <!doctype html>
 <html>
