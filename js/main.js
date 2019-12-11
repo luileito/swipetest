@@ -32,7 +32,6 @@ $(function() {
     var shapewritingKeys = [];
     var renderedKeyboardData = null;
     var renderedKeyboardImage = null;
-    var wordWarning = false;
     var containerSize = {width: 0, height: 0};
 
     // Configure the look and feel of keys.
@@ -342,12 +341,6 @@ $(function() {
             $curWord.addClass('wrong');
 
             sendEvents(todoText);
-
-//            // Alert user sparingly.
-//            if (!wordWarning) {
-//                alert('Please try again');
-//                wordWarning = true;
-//            }
         } else {
             // Update words state.
             // Don't remove the "todo" class because we'll use it to decide when the sentence is done.
