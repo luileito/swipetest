@@ -30,7 +30,8 @@ $(function() {
     var sentenceHash = $sentence.data('hash');
     var keyboardIndex = 0;
     var shapewritingKeys = [];
-    var renderedKeyboard = null;
+    var renderedKeyboardData = null;
+    var renderedKeyboardImage = null;
     var wordWarning = false;
     var containerSize = {width: 0, height: 0};
 
@@ -51,7 +52,6 @@ $(function() {
     keyboard.settings.backgroundColor = '#fff';
     keyboard.settings.shapewritingColor = 'cyan';
     keyboard.settings.shapewritingSize = 6;
-    keyboard.settings.globalCompositeOperation = 'multiply';
 
     // Setup text display.
     $message.html(keyboard.settings.cursorSymbol);
@@ -225,9 +225,9 @@ $(function() {
 //        ctx.stroke();
 
         // Save a snapshot of the canvas.
-        renderedKeyboard = ctx.getImageData(0, 0, keyboardCanvas.width, keyboardCanvas.height);
+        renderedKeyboardData = ctx.getImageData(0, 0, keyboardCanvas.width, keyboardCanvas.height);
+        renderedKeyboardImage = keyboardCanvas.toDataURL('image/png');
     }
-
 
     function onPointerPress(e) {
         e.preventDefault();
@@ -292,7 +292,7 @@ $(function() {
         var ctx = $keyboard.get(0).getContext('2d');
 
         // Re-render layout to remove shapewriting path.
-        ctx.putImageData(renderedKeyboard, 0, 0);
+        repaintKbd();
 
         // Since tap events on dummy keys don't propagate, exit early.
         var iniTouch = shapewritingKeys[0];
@@ -387,7 +387,7 @@ $(function() {
     function drawPath(ctx) {
         if (!ctx) ctx = $keyboard.get(0).getContext('2d');
 
-        ctx.globalCompositeOperation = keyboard.settings.globalCompositeOperation;
+        ctx.globalAlpha = 0.5;
 
         ctx.beginPath();
         ctx.lineWidth = keyboard.settings.shapewritingSize;
@@ -400,22 +400,17 @@ $(function() {
         prevPos = currPos;
     }
 
-//    function update() {
-//        var keyboardCanvas = $keyboard.get(0);
-//        var ctx = keyboardCanvas.getContext('2d');
-//        ctx.globalCompositeOperation = keyboard.settings.globalCompositeOperation;
+    function repaintKbd() {
+        // NB: `ctx.putImageData(renderedKeyboardData, 0, 0)` doesn't render nicely (too abrupt).
+        // So we create an actual image and blend the image data.
+        if (!renderedKeyboardData) return;
 
-// //        ctx.clearRect(0, 0, keyboardCanvas.width, keyboardCanvas.height);
-// //        ctx.putImageData(renderedKeyboard, 0, 0);
-
-//        drawPath(ctx);
-
-//        // Fade out the previous tails
-//        ctx.fillStyle = `rgba(0, 0, 0, 0.1)`;
-//        ctx.fillRect(0, 0, keyboardCanvas.width, keyboardCanvas.height);
-
-//        requestAnimationFrame(update);
-//    }
+        var keyboardCanvas = $keyboard.get(0);
+        var ctx = keyboardCanvas.getContext('2d');
+        var img = new Image();
+        img.src = renderedKeyboardImage;
+        ctx.drawImage(img, 0, 0);
+    }
 
     function type(char) {
         switch (char) {
@@ -517,6 +512,9 @@ $(function() {
 
     updateMeasures();
     renderKeyboard();
+    // Repaint keyboard to produce a nice fade out effect.
+    // NB: `requestAnimationFrame()` is too aggressive.
+    setInterval(repaintKbd, 250);
 
     // Listen to device orientation changes.
     // Notice that the layout size takes some time to update dimensions,
