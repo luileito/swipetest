@@ -30,8 +30,7 @@ $(function() {
     var sentenceHash = $sentence.data('hash');
     var keyboardIndex = 0;
     var shapewritingKeys = [];
-    var renderedKeyboardData = null;
-    var renderedKeyboardImage = null;
+    var renderedKeyboard = null;
     var containerSize = {width: 0, height: 0};
 
     // Configure the look and feel of keys.
@@ -224,8 +223,8 @@ $(function() {
 //        ctx.stroke();
 
         // Save a snapshot of the canvas.
-        renderedKeyboardData = ctx.getImageData(0, 0, keyboardCanvas.width, keyboardCanvas.height);
-        renderedKeyboardImage = keyboardCanvas.toDataURL('image/png');
+        // NB: `ctx.getImageData()` and `ctx.putImageData()` don't render nicely.
+        renderedKeyboard = keyboardCanvas.toDataURL('image/png');
     }
 
     function onPointerPress(e) {
@@ -394,14 +393,14 @@ $(function() {
     }
 
     function repaintKbd() {
-        // NB: `ctx.putImageData(renderedKeyboardData, 0, 0)` doesn't render nicely (too abrupt).
-        // So we create an actual image and blend the image data.
-        if (!renderedKeyboardData) return;
+        // NB: `ctx.putImageData()` doesn't render nicely, it's too abrupt.
+        // So we create an actual image element to improve the fading animation.
+        if (!renderedKeyboard) return;
 
         var keyboardCanvas = $keyboard.get(0);
         var ctx = keyboardCanvas.getContext('2d');
         var img = new Image();
-        img.src = renderedKeyboardImage;
+        img.src = renderedKeyboard;
         ctx.drawImage(img, 0, 0);
     }
 
