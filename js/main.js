@@ -56,9 +56,10 @@ $(function(){
   keyboard.settings.globalCompositeOperation = 'multiply';
 
   // Setup text display.
-  $message.html(keyboard.settings.cursorSymbol).on('click', function(ev) {
-      $(this).html(keyboard.settings.cursorSymbol);
-  });
+  $message.html(keyboard.settings.cursorSymbol)
+//  .on('click', function(ev) {
+//      $(this).html(keyboard.settings.cursorSymbol);
+//  });
 
   // Init sentence token.
   $sentence.find('span').first().addClass('current');
@@ -66,16 +67,19 @@ $(function(){
   function updateMeasures() {
       var layoutSize = keyboard.measure(keyboardIndex);
 
-      var docWidth = $container.width();
-      var docHeight = $container.height();
+      var $body = $(document.body);
+      var docWidth = $body.width();
+      var docHeight = $body.height() + $keyboard.height();
       if (docWidth > docHeight) {
           // Landscape mode.
           containerSize = {
               width: docWidth,
-              height: docHeight * 0.6,
+              height: docHeight * 0.4,
           };
           keyboard.settings.keyHeight = containerSize.height / layoutSize.numRows;
           keyboard.settings.keyWidth = containerSize.width / layoutSize.numCols;
+          // Scroll to info text, so that the use can see the stimuli sentences AND the keyboard.
+          $('.global').scrollTop( $('.instructions').offset().top );
       } else {
           // Portrait mode.
           containerSize = {
@@ -84,7 +88,9 @@ $(function(){
           };
           keyboard.settings.keyWidth = containerSize.width / layoutSize.numCols;
           keyboard.settings.keyHeight = containerSize.height / layoutSize.numRows;
+          // In portrait mode we don't need to scroll down.
       }
+
       // Make font size proportional to available space as well.
       // For uppercase letters, `keyWidth / 3` looks good.
       keyboard.settings.keyFontSize = Math.min(15, Math.round(keyboard.settings.keyWidth / 3));
@@ -93,15 +99,15 @@ $(function(){
   function logEvent(evName, touch) {
       var time = (new Date).getTime()
         , currTok = $sentence.find('.current').text()
-        , keyboard_width = $keyboard.width()
-        , keyboard_height = $keyboard.height()
+        , keyboardWidth = $keyboard.width()
+        , keyboardHeight = $keyboard.height()
         ;
 
       evQueue.push([
           sentenceHash,
           time,
-          keyboard_width,
-          keyboard_height,
+          keyboardWidth,
+          keyboardHeight,
           evName,
           touch.x,
           touch.y,
@@ -194,24 +200,26 @@ $(function(){
 
   function renderKeyboard() {
       var layoutSize = keyboard.measure(keyboardIndex);
-      // Center keyboard on screen.
-      keyboard.settings.offsetLeft = (containerSize.width - layoutSize.width)/2;
-      keyboard.settings.offsetTop = (containerSize.height - layoutSize.height)/2;
 
       var keyboardCanvas = $keyboard.get(0);
-      // Fill in all available space.
-      keyboardCanvas.width = containerSize.width;
-      keyboardCanvas.height = containerSize.height;
+      // Fill in all available space, according to the actual keyboard layout size.
+      keyboardCanvas.width = layoutSize.width;
+      keyboardCanvas.height = layoutSize.height;
 
+//      // We can use a smaller area for the keyboard, in which case we should center it.
+//      keyboardCanvas.width = containerSize.width;
+//      keyboardCanvas.height = containerSize.height;
+//      keyboard.settings.offsetLeft = (containerSize.width - layoutSize.width)/2;
+//      keyboard.settings.offsetTop = (containerSize.height - layoutSize.height)/2;
+
+      // TODO: Maybe implement the scaling trick to improve canvas resolution,
+      // although it's non-trivial and requires lots of sanity checks.
       var ctx = keyboardCanvas.getContext('2d');
-
-//      // TODO: Implement the scaling trick to improve canvas resolution.
-//      $keyboard.css({ 'width': containerSize.width/2, 'height': containerSize.height/2 });
-//      ctx.scale(2, 2);
 
       // Draw background color.
       ctx.fillStyle = keyboard.settings.backgroundColor;
       ctx.fillRect(0, 0, keyboardCanvas.width, keyboardCanvas.height);
+
       // Draw keys.
       keyboard.getLayout(keyboardIndex).forEach(drawKey);
 
@@ -232,7 +240,13 @@ $(function(){
       currPos = prevPos = p;
 
       var currentKey = getClosestKey(p);
-      shapewritingKeys.push(currentKey);
+      // Ignore taps on dummy keys.
+      if (!currentKey.dummy) {
+          shapewritingKeys.push(currentKey);
+      } else {
+          e.stopPropagation();
+          return;
+      }
 
       logEvent('touchstart', p);
   }
@@ -244,7 +258,9 @@ $(function(){
       currPos = p;
 
       var currentKey = getClosestKey(p);
-      shapewritingKeys.push(currentKey);
+      if (!currentKey.dummy) {
+          shapewritingKeys.push(currentKey);
+      }
 
       logEvent('touchmove', p);
 
@@ -258,7 +274,9 @@ $(function(){
       currPos = prevPos = p;
 
       var currentKey = getClosestKey(p);
-      shapewritingKeys.push(currentKey);
+      if (!currentKey.dummy) {
+          shapewritingKeys.push(currentKey);
+      }
 
       logEvent('touchend', p);
 
@@ -280,13 +298,16 @@ $(function(){
       // Re-render layout to remove shapewriting path.
       ctx.putImageData(renderedKeyboard, 0, 0);
 
+      // Since tap events on dummy keys don't propagate, exit early.
+      var iniTouch = shapewritingKeys[0];
+      var endTouch = shapewritingKeys[shapewritingKeys.length - 1];
+      if (!iniTouch || !endTouch) return;
+
       // Verify that swipe path begins and ends in the right key.
       var $curWord = $sentence.find('.current');
       var todoText = $curWord.text();
       var iniKey = getKeyFromChar(todoText[0]);
-      var iniTouch = shapewritingKeys[0];
       var endKey = getKeyFromChar(todoText[todoText.length - 1]);
-      var endTouch = shapewritingKeys[shapewritingKeys.length - 1];
       var iniCenter = getKeyCenter(iniKey);
       var endCenter = getKeyCenter(endKey);
       var iniDist = distance(iniTouch, iniCenter);
