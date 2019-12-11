@@ -67,7 +67,7 @@ if (!empty($_POST)) {
         </div>
 
         <h4><?php _e('Instructions'); ?></h4>
-        <ol class="list-indented">
+        <ol class="list-indented list-spaced">
           <li>
             <?php echo sprintf(_('The test will take about %d minutes of your time.'), MAX_EST_MINUTES); ?>
             <?php echo sprintf(_('You will be presented with %d short sentences, one by one.'), MAX_NUM_SENTENCES + NUM_TRIAL_SENTENCES); ?>
@@ -81,13 +81,16 @@ if (!empty($_POST)) {
             <?php _e('You have to swipe each word on a custom virtual keyboard as fast and as accurately as possible.'); ?>
           </li>
           <li>
+            <?php _e('Please be aware that some sentences may contain gibberish text or even offensive words.'); ?>
+          </li>
+          <li>
             <?php _e('You will see the following color codes as visual feeback:'); ?>
             <br>
             <img src="img/word-colors.png" alt="Color codes" style="max-width:100%;" />
-            <ul class="pl-3">
-              <li><?php echo sprintf(_('Successfully entered words are in %s'), '<b style="color:blue">'._('blue').'</b>'); ?></li>
-              <li><?php echo sprintf(_('Pending words are in %s'), '<b style="color:gray">'._('gray').'</b>'); ?></li>
-              <li><?php echo sprintf(_('The current word you must swipe is in %s'), '<b style="color:black">'._('black').'</b>'); ?></li>
+            <ul class="pl-3 list-nospaced">
+              <li><?php echo sprintf(_('Successfully entered words are shown in %s color'), '<b style="color:blue">'._('blue').'</b>'); ?></li>
+              <li><?php echo sprintf(_('Pending words are shown in %s color'), '<b style="color:gray">'._('gray').'</b>'); ?></li>
+              <li><?php echo sprintf(_('The current word you must swipe is shown in %s color'), '<b style="color:black">'._('black').'</b>'); ?></li>
               <li><?php echo sprintf(_('If you swipe wrongly, the current word will turn %s (please retry!)'), '<b style="color:red">'._('red').'</b>'); ?></li>
             </ul>
           </li>
@@ -104,7 +107,7 @@ if (!empty($_POST)) {
       <hr/>
 
       <h4 class="text-muted"><?php _e('Please fill in this form in order to proceed'); ?></h4>
-      <p><?php _e('We need to know a little bit about you for statistical purposes.'); ?></p>
+      <p><?php _e('We need to know a little bit about you, for statistical purposes.'); ?></p>
 
       <form method="post" action="<?php echo $_SERVER['PHP_SELF']; ?>">
         <div class="form-group row">
