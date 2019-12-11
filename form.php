@@ -61,6 +61,11 @@ if (!empty($_POST)) {
         <?php _e('This brief test allows you to test how good you can swipe on your mobile phone and compare with others.'); ?>
         <?php _e('Data is collected and used for scientific purposes only and strictly anonymized.'); ?>
         </p>
+
+        <div class="text-center mb-3">
+          <img src="img/swipe-anim.gif" alt="Swipe animation" />
+        </div>
+
         <h4><?php _e('Instructions'); ?></h4>
         <ol class="list-indented">
           <li>
