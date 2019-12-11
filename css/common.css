@@ -20,6 +20,12 @@ body {
 .list-indented {
   padding-left: 1em;
 }
+.list-spaced li {
+  margin: 0.5em;
+}
+.list-nospaced li {
+  margin: 0;
+}
 .mt {
   margin-top: 1em;
 }
