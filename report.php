@@ -12,7 +12,7 @@ if (empty($comment)) {
 $mark = date('r');
 $contents  = 'Date: '.$mark.PHP_EOL;
 $contents .= $comment.PHP_EOL.PHP_EOL;
-file_put_contents('feedback.txt', $contents, FILE_APPEND);
+file_put_contents(USER_FEEDBACK_FILE, $contents, FILE_APPEND);
 ?>
 <!doctype html>
 <html>

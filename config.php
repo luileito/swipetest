@@ -25,6 +25,9 @@ define('USER_METADATA_FILE', LOGS_DIR.'/'.USER_ID.'.json');
 // File to write the sentences entered by the user from the MEMORABLE condition.
 // NB: Each line will contain a hashed sentence, not plain text.
 define('USER_SENTENCES_FILE', LOGS_DIR.'/'.USER_ID.'.txt');
+// File to write the user feedback (reported issues).
+// Notice that any user can report any issue, even before taking part in the test.
+define('USER_FEEDBACK_FILE', LOGS_DIR.'/feedback.txt');
 // Path to the MEMORABLE sentences file.
 // One sentence per line, lowercased, no punctuation symbols, no numbers.
 define('DATA_SENTENCES_FILE', DATA_DIR.'/mem200.txt');
