@@ -95,8 +95,7 @@ if (isset($_GET['debug'])) var_dump($_SESSION['condition'], $_SESSION['done_coun
 
           <br />
 
-          <?php _e('Enter these words by swiping on the virtual keyboard below.'); ?>
-          <b><?php _e('Try to <i>memorize</i> each word before you type.'); ?></b>
+          <?php _e('<i>Read this text first<i>, then enter each word by swiping on the virtual keyboard below.'); ?>
         </p>
 
         <h4 class="sentence" data-hash="<?php echo $txt_hash; ?>">
