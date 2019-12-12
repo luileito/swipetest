@@ -66,19 +66,22 @@ function _e($msg) {
  */
 function time_distribution($glob) {
     // Notice that users can enter the same sentence in different sessions,
-    // so only the latest entry will be considered.
+    // so only the latest (non-failed) entry will be considered.
+    // NB: Each row in a log file has the following format:
+    // ['sentence', 'timestamp', ..., 'word', 'isFailedWord']
     $cmd = sprintf("for f in %s; do \
       grep -w touchmove \$f | awk 'BEGIN {
-        word[$1] = 0x42;
-      } $9 == 0 {
-        if (word[$1] != $8) hdic[$1][$8][0] = $2;
-        hdic[$1][$8][1] = $2;
-        word[$1] = $8;
+        words[$1] = 0x42;
+      } $(NF) == 0 {
+        w = $(NF - 1);
+        if (words[$1] != w) hdict[$1][w][0] = $2;
+        hdict[$1][w][1] = $2;
+        words[$1] = w;
       } END {
-        for (h in hdic) {
-          for (w in hdic[h]) {
-            t0 = hdic[h][w][0];
-            t1 = hdic[h][w][1];
+        for (h in hdict) {
+          for (w in hdict[h]) {
+            t0 = hdict[h][w][0];
+            t1 = hdict[h][w][1];
             t = t1 - t0;
             if (t > 0 && t < 9999) print t;
           }
@@ -99,10 +102,13 @@ function time_distribution($glob) {
 function error_distribution($glob) {
     // We count errors on a per-word basis, i.e. if the user swiped several
     // times the same word in a row, then only one error is considered.
+    // NB: Each row in a log file has the following format:
+    // ['sentence', 'timestamp', ..., 'word', 'isFailedWord']
     $cmd = sprintf("for f in %s; do \
       grep -w touchend \$f | awk '{
-        if ($9 == 1) errs[$1][$8] = 0x42;
-        else tots[$1][$8] = 0x42;
+        w = $(NF - 1);
+        if ($(NF) == 1) errs[$1][w] = 0x42;
+        else tots[$1][w] = 0x42;
       } END {
         for (h in tots) {
           errsum = length(errs[h]);
