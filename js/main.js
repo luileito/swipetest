@@ -160,19 +160,19 @@ $(function() {
         ctx.fill();
         ctx.stroke();
 
-        var center = getKeyCenter(k);
-        var radius = 0;
-//        ctx.beginPath();
+//        var center = getKeyCenter(k);
+
 //        // DEBUG: Draw key centers.
+//        ctx.beginPath();
 //        ctx.fillStyle = 'red';
-//        radius = keyboard.settings.keyFontSize;
+//        var radius = keyboard.settings.keyFontSize;
 //        ctx.arc(center.x, center.y, radius, 0, 2 * Math.PI);
 //        ctx.fill();
 
 //        // DEBUG: Draw key hitTarget areas.
 //        ctx.beginPath();
 //        ctx.strokeStyle = 'teal';
-//        radius = 2.5 * Math.max(keyboard.settings.keyWidth, keyboard.settings.keyHeight) / 2;
+//        var radius = 2.5 * Math.max(keyboard.settings.keyWidth, keyboard.settings.keyHeight) / 2;
 //        ctx.arc(center.x, center.y, radius, 0, 2 * Math.PI);
 //        ctx.stroke();
 
@@ -278,17 +278,6 @@ $(function() {
     }
 
     function handleTextSwipe() {
-        // Get a list of unique consecutively entered chars;
-        // e.g. `['a', 'a', 'b', 'a']` becomes `['a', 'b', 'a']`.
-        var travelKeys = shapewritingKeys.filter(function(item, pos, arr) {
-            return pos === 0 || item.char !== arr[pos-1].char;
-        });
-
-//        // DEBUG: For the records, statistical decoders have to deal with this gibberish text:
-//        travelKeys.map(k => k.char).forEach(type);
-
-        var ctx = $keyboard.get(0).getContext('2d');
-
         // Re-render layout to remove shapewriting path.
         repaintKbd();
 
@@ -311,10 +300,9 @@ $(function() {
 
         // Edge case: some words begin and start with the same char (e.g. "mum", "rooster")
         // therefore we have to ensure that a swipe gesture was actually used.
-        var todoKeys = todoText.split('').filter(function(item, pos, arr) {
-            return pos === 0 || item.char !== arr[pos-1].char;
-        });
-        if (travelKeys.length < todoKeys.length) isWrong = true;
+        var todoKeys = consecutiveKeys(todoText.split(''));
+        var swipedKeys = consecutiveKeys(shapewritingKeys);
+        if (swipedKeys.length < todoKeys.length) isWrong = true;
 
         // Flag the whole swipe sequence as right or wrong.
         evQueue = evQueue.map(function(entry) {
@@ -358,6 +346,15 @@ $(function() {
         }
 
         shapewritingKeys = [];
+    }
+
+    function consecutiveKeys(charList) {
+        // Get a list of unique consecutively entered chars;
+        // e.g. `['a', 'a', 'b', 'a']` becomes `['a', 'b', 'a']`.
+        return charList.filter(function(item, pos, arr) {
+            var prev = arr[pos - 1];
+            return pos === 0 || item.char !== prev.char;
+        });
     }
 
     function sendEvents(word, isDone) {
