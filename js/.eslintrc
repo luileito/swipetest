@@ -1,13 +1,13 @@
 {
-	"env": {
-		"browser": true
-	},
+  "env": {
+    "browser": true
+  },
   "extends": "google",
   "rules": {
       "no-var": 0,
-			"max-len": 0,
+      "max-len": 0,
       "indent": ["error", 4, { "ignoreComments":true }],
-			"no-unused-vars": 1,
-			"require-jsdoc": 1
+      "no-unused-vars": 1,
+      "require-jsdoc": 1
   }
 }
