@@ -11,8 +11,11 @@ body {
 }
 .logo {
   display: block;
-  max-width: 100%;
+  max-width: 95%;
   margin-bottom: 1em;
+}
+.logo-small {
+  max-width: 60%;
 }
 .instructions {
   font-size: 90%;

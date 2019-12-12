@@ -54,7 +54,10 @@ if (!empty($_POST)) {
   </head>
   <body>
     <div class="container">
-      <img src="img/swipe-test-logo.png" alt="Swipe test logo" class="logo" />
+
+      <p class="text-center">
+        <img src="img/swipe-test-logo.png" alt="Swipe test logo" class="logo" />
+      </p>
 
       <div class="instructions">
         <p>

@@ -87,8 +87,10 @@ if (isset($_GET['debug'])) var_dump($_SESSION['condition'], $_SESSION['done_coun
   <body>
     <div class="global">
       <div class="info">
-        <img src="img/swipe-test-logo.png" alt="Swipe test logo" class="logo" />
 
+        <p class="text-center">
+          <img src="img/swipe-test-logo.png" alt="Swipe test logo" class="logo-small" />
+        </p>
         <p class="instructions">
           <?php echo sprintf(_('%s more sentences to go!'), NUM_TODO_SENTENCES); ?>
           <a href="#feedback">Report an issue</a>
@@ -103,6 +105,7 @@ if (isset($_GET['debug'])) var_dump($_SESSION['condition'], $_SESSION['done_coun
             <span class="todo"><?php echo $tok; ?></span>
           <?php endforeach; ?>
         </h4>
+
       </div>
       <div class="container">
         <div class="message"></div>
