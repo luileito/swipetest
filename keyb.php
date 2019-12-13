@@ -5,7 +5,7 @@
 // See https://www.keithv.com/software/enronmobile/ and https://github.com/first20hours/google-10000-english
 
 $choices = ['RANDOM', 'MEMORABLE'];
-$_SESSION['condition'] = $choices[random_int(0, count($choices) - 1)];
+$_SESSION['condition'] = $choices[rand(0, count($choices) - 1)];
 
 // Ensure that the user enters the expected number of memorable sentences.
 if ($_SESSION['condition'] == 'RANDOM' && $_SESSION['rand_count'] == NUM_RANDOM_SENTENCES) {
