@@ -8,6 +8,18 @@ if (!empty($_POST['events'])) {
     $word = filter_var($_POST['word'], FILTER_SANITIZE_STRING);
     $_SESSION['done_words'][] = $word;
 
+    // Ignore trial sentences, since they're typically outliers.
+    // Notice that `done_count` is used on the session-level,
+    // whereas `prev_count` takes into account ALL the previous sessions.
+    if ($_SESSION['prev_count'] >= NUM_TRIAL_SENTENCES) {
+        $events = json_decode($_POST['events']);
+        $entries = '';
+        foreach($events as $event) {
+            $entries .= implode(' ', $event).PHP_EOL;
+        }
+        file_put_contents(USER_EVENTS_FILE, $entries, FILE_APPEND);
+    }
+
     if (isset($_POST['isDone'])) {
         // Increase sentence counter only when *all* words have been submitted.
         // The `isDone` flag accounts for this. See `main.js`.
@@ -27,18 +39,6 @@ if (!empty($_POST['events'])) {
                 // Condition not implemented.
             }
         }
-    }
-
-    // Ignore trial sentences, since they're typically outliers.
-    // Notice that `done_count` is used on the session-level,
-    // whereas `prev_count` takes into account ALL the previous sessions.
-    if ($_SESSION['prev_count'] > NUM_TRIAL_SENTENCES) {
-        $events = json_decode($_POST['events']);
-        $entries = '';
-        foreach($events as $event) {
-            $entries .= implode(' ', $event).PHP_EOL;
-        }
-        file_put_contents(USER_EVENTS_FILE, $entries, FILE_APPEND);
     }
 
     _e('OK');
