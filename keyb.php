@@ -39,9 +39,6 @@ if ($_SESSION['condition'] == 'RANDOM') {
         } while (in_array($word, $_SESSION['done_words']));
         $tokens[] = $word;
     }
-    // This is to keep retro-compatibility with the previous system implementation.
-    $txt_hash = sha1(implode(',', $tokens));
-
     // Randomize word order to account for potential confounding factors,
     // e.g. if the last token is always the OOV, the user might write it without effort
     // since s/he already entered 3 words and thus has some "inertia".
@@ -58,7 +55,6 @@ if ($_SESSION['condition'] == 'RANDOM') {
     do {
         $rand_idx = rand(0, count($data_sentences) - 1);
         $sentence = $data_sentences[$rand_idx];
-        $txt_hash = sha1($sentence);
     } while (in_array($txt_hash, $hash_sentences) && count($hash_sentences) < count($data_sentences));
 
     // We could do some preprocessing here,
@@ -69,6 +65,10 @@ if ($_SESSION['condition'] == 'RANDOM') {
 } else {
     // Condition not implemented.
 }
+
+// Hash sentence by joining words using underscores.
+// Another option would be to save the sentence as it was shown and use TAB as CSV delimiter.
+$txt_hash = implode('_', $tokens);
 
 if (isset($_GET['debug'])) var_dump($_SESSION['condition'], $_SESSION['done_count'], $_SESSION['rand_count']);
 ?>
