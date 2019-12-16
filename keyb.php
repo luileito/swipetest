@@ -14,7 +14,8 @@ if ($_SESSION['condition'] == 'RANDOM' && $_SESSION['rand_count'] == NUM_RANDOM_
 
 // Ensure that the user enters the expected number of random sentences.
 $max_memorable_sentences = MAX_NUM_SENTENCES - NUM_RANDOM_SENTENCES;
-if ($_SESSION['condition'] == 'MEMORABLE' && $_SESSION['done_count'] == $max_memorable_sentences) {
+$done_memorable = $_SESSION['done_count'] - $_SESSION['rand_count'];
+if ($condition == 'MEMORABLE' && $done_memorable == $max_memorable_sentences) {
     $_SESSION['condition'] = 'RANDOM';
 }
 
