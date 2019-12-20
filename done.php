@@ -17,8 +17,16 @@
       </p>
 
       <?php
+      // We can reproduce other users' results by passing in the `uid` query param.
+      // If the param is not set, we use the session data.
+      $user_id = filter_var($_GET['uid'], FILTER_SANITIZE_STRING);
+      $user_log_file = LOGS_DIR.'/'.$user_id.'.log';
+      if (empty($user_id)) {
+          $user_log_file = USER_EVENTS_FILE;
+      }
+
       $all_times = time_distribution(LOGS_DIR.'/*.log');
-      $user_time = time_distribution(USER_EVENTS_FILE);
+      $user_time = time_distribution($user_log_file);
       $time_percentile = percentile($all_times, $user_time);
 
       // Antti dixit: "Report WPM instead".
@@ -27,7 +35,7 @@
       $wpm_percentile = percentile($all_wpms, $user_wpm);
 
       $all_errors = error_distribution(LOGS_DIR.'/*.log');
-      $user_error = error_distribution(USER_EVENTS_FILE);
+      $user_error = error_distribution($user_log_file);
       $error_percentile = percentile($all_errors, $user_error);
 
 
