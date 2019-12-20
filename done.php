@@ -17,42 +17,52 @@
       </p>
 
       <?php
-        $all_times = time_distribution(LOGS_DIR.'/*.log');
-        $user_time = time_distribution(USER_EVENTS_FILE);
-        $time_percentile = percentile($all_times, $user_time);
+      $all_times = time_distribution(LOGS_DIR.'/*.log');
+      $user_time = time_distribution(USER_EVENTS_FILE);
+      $time_percentile = percentile($all_times, $user_time);
 
-        $all_errors = error_distribution(LOGS_DIR.'/*.log');
-        $user_error = error_distribution(USER_EVENTS_FILE);
-        $error_percentile = percentile($all_errors, $user_error);
+      // Antti dixit: "Report WPM instead".
+      $user_wpm = 60 / $user_time[0];
+      $all_wpms = array_map(function($v) { return 60/$v; }, $all_times);
+      $wpm_percentile = percentile($all_wpms, $user_wpm);
 
-        $time_histogram = histogram($all_times, 5);
-        $time_bin_index = find_value_in_histogram($time_histogram, $user_time);
+      $all_errors = error_distribution(LOGS_DIR.'/*.log');
+      $user_error = error_distribution(USER_EVENTS_FILE);
+      $error_percentile = percentile($all_errors, $user_error);
 
-        $error_histogram = histogram($all_errors, 5);
-        $error_bin_index = find_value_in_histogram($error_histogram, $user_error);
+
+      //$time_histogram = histogram($all_times, 10);
+      //$time_bin_index = find_value_in_histogram($time_histogram, $user_time);
+
+      $wpm_histogram = histogram($all_wpms, 10);
+      $wpm_bin_index = find_value_in_histogram($wpm_histogram, $user_wpm);
+
+      $error_histogram = histogram($all_errors, 10);
+      $error_bin_index = find_value_in_histogram($error_histogram, $user_error);
       ?>
 
       <h4>
       <?php echo sprintf(_('You swipe faster than %d%% of all people'), 100 - $time_percentile); ?>
       </h4>
       <p>
-      <?php echo sprintf(_('Your average swipe time is %.2f seconds per word.'), $user_time[0]); ?>
-      <?php
-      $best_time_performers = (count($all_times) - 1) * $time_percentile/100;
-      echo sprintf(_('Overall, %d users did better than you.'), $best_time_performers);
-      ?>
+        <b><?php echo sprintf(_('Your typing speed is %d words per minute.'), $user_wpm); ?></b>
+        <?php echo sprintf(_('Your average swipe time is %.2f seconds per word.'), $user_time[0]); ?>
+        <?php
+        $best_time_performers = (count($all_times) - 1) * $time_percentile/100;
+        echo sprintf(_('Overall, %d users did better than you.'), $best_time_performers);
+        ?>
       </p>
-      <canvas class="mb-5" id="time-chart"></canvas>
+      <canvas class="mb-5" id="speed-chart"></canvas>
 
       <h4>
       <?php echo sprintf(_('You have less errors than %d%% of all people'), 100 - $error_percentile); ?>
       </h4>
       <p>
-      <?php echo sprintf(_('Your average word error is %d%% per sentence.'), $user_error[0]); ?>
-      <?php
-      $best_error_performers = (count($all_errors) - 1) * $error_percentile/100;
-      echo sprintf(_('Overall, %d users did better than you.'), $best_error_performers);
-      ?>
+        <?php echo sprintf(_('Your average word error is %d%% per sentence.'), $user_error[0]); ?>
+        <?php
+        $best_error_performers = (count($all_errors) - 1) * $error_percentile/100;
+        echo sprintf(_('Overall, %d users did better than you.'), $best_error_performers);
+        ?>
       </p>
       <canvas class="mb-3" id="error-chart"></canvas>
 
@@ -72,17 +82,20 @@
               });
           });
 
-          var timeHistogram = <?php echo json_encode($time_histogram); ?>;
-          var timeBinIndex = <?php echo $time_bin_index; ?>;
+          var speedHistogram = <?php echo json_encode($wpm_histogram); ?>;
+          var speedBinIndex = <?php echo $wpm_bin_index; ?>;
           var errorHistogram = <?php echo json_encode($error_histogram); ?>;
           var errorBinIndex = <?php echo $error_bin_index; ?>;
 
-          plot('time-chart', timeHistogram, timeBinIndex, '#3f9', 'Average swipe time in seconds, lower is better');
-          plot('error-chart', errorHistogram, errorBinIndex, '#f93', 'Average word error rate, lower is better');
+          plot('speed-chart', speedHistogram, speedBinIndex, '#3f9', 'Words per minute, higher is better');
+          plot('error-chart', errorHistogram, errorBinIndex, '#f93', 'Word error rate, lower is better');
 
           function plot(elemId, histogram, binIndex, binColor, title) {
               var labels = Object.keys(histogram);
               var values = labels.map(function(bin) { return histogram[bin]; });
+              // Display percentange of users instead of the sample size.
+              var sumVal = values.reduce(function(acc, v) { return acc + v; }, 0);
+              values = values.map(function(v) { return 100 * v/sumVal; });
               // Highlight user bin and display remaining bars in gray color.
               var colors = Array.apply(null, Array(values.length)).map(function(v) { return '#ccc'; });
               colors[binIndex] = binColor;
@@ -91,9 +104,8 @@
 			        var plt = new Chart(ctx, {
 				          type: 'bar',
 				          data: {
-				              labels: labels, //.map(function(bin) { return Math.ceil(bin.split('-').pop()); }),
+				              labels: labels.map(function(bin) { return bin.split('-').pop(); }),
 				              datasets: [{
-              				    label: 'users',
               				    data: values,
               				    backgroundColor: colors,
 				              }]
@@ -115,11 +127,15 @@
                               gridLines: {
                                   display: false,
                               },
+                              scaleLabel: {
+                                  display: true,
+                                  labelString: '% of participants'
+                              }
                           }],
                           xAxes: [{
                               ticks: {
-                                  //maxRotation: 90,
-                                  //minRotation: 90,
+                                  maxRotation: 90,
+                                  minRotation: 90,
                               },
                           }],
                       },

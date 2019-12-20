@@ -152,8 +152,8 @@ function percentile($values, $value) {
  * @return {array}
  */
 function histogram($values, $num_bins=1, $min_val=NULL, $max_val=NULL) {
-    if (is_null($min_val)) $min_val = min($values);
-    if (is_null($max_val)) $max_val = max($values);
+    if (is_null($min_val)) $min_val = min($values) * 0.99;
+    if (is_null($max_val)) $max_val = max($values) * 1.01;
 
     $step_val = ($max_val - $min_val) / $num_bins;
     $widths = range($min_val, $max_val, $step_val);
@@ -174,7 +174,7 @@ function histogram($values, $num_bins=1, $min_val=NULL, $max_val=NULL) {
         $closest_bin = $bins[0];
         foreach ($bins as $bin) {
             list($lo, $hi) = $bin;
-            $val = round($val);
+            $val = pr1($val);
             if ($val >= $lo && $val <= $hi) {
                 $closest_bin = $bin;
                 break;
