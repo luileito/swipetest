@@ -93,7 +93,7 @@ if (isset($_GET['debug'])) var_dump($_SESSION['condition'], $_SESSION['done_coun
           <img src="img/swipe-test-logo.png" alt="Swipe test logo" class="logo-small" />
         </p>
         <p class="instructions">
-          <?php echo sprintf(_('%s more sentences to go!'), NUM_TODO_SENTENCES); ?>
+          <b><?php echo sprintf(_('%s more sentences to go!'), NUM_TODO_SENTENCES); ?></b>
           <a href="#feedback">Report an issue</a>
 
           <br />
