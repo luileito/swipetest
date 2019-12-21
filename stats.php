@@ -15,7 +15,10 @@
       $out = shell_exec($cmd);
       $res = explode(PHP_EOL, trim($out));
       ?>
-      <h3>Participants</h3>
+
+      <h3><?php _e('Participants'); ?></h3>
+      <p><?php echo sprintf(_('So far %d users have taken the test.'), count($res)); ?></p>
+
       <ul class="list-indented">
         <?php foreach ($res as $line): ?>
           <?php list($date, $uid) = explode(' ', $line); ?>
