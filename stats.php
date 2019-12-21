@@ -13,12 +13,16 @@
       <?php
       $cmd = sprintf('find %s -name "*.log" | while read f; do echo $(date -r $f "+%%Y-%%m-%%d") $(basename $f .log); done | sort -rn', LOGS_DIR);
       $out = shell_exec($cmd);
-      $lst = explode(PHP_EOL, trim($out));
+      $res = explode(PHP_EOL, trim($out));
       ?>
       <h3>Participants</h3>
       <ul class="list-indented">
-        <?php foreach ($lst as $l): ?>
-          <li><a href="done.php?uid=<?php echo $l; ?>"><?php echo $l; ?></a></li>
+        <?php foreach ($res as $line): ?>
+          <?php list($date, $uid) = explode(' ', $line); ?>
+          <li>
+            <?php echo $date; ?>
+            <a href="done.php?uid=<?php echo $uid; ?>"><?php echo $uid; ?></a>
+          </li>
         <?php endforeach; ?>
       </ul>
     </div>
