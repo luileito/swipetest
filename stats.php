@@ -11,7 +11,7 @@
   <body>
     <div class="container">
       <?php
-      $cmd = sprintf('find %s -name "*.log" | while read f; do echo $(basename $f .log); done', LOGS_DIR);
+      $cmd = sprintf('find %s -name "*.log" | while read f; do echo $(date -r $f "+%%Y-%%m-%%d") $(basename $f .log); done | sort -rn', LOGS_DIR);
       $out = shell_exec($cmd);
       $lst = explode(PHP_EOL, trim($out));
       ?>
