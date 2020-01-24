@@ -25,6 +25,7 @@
           <li>
             <?php echo $date; ?>
             <a href="done.php?uid=<?php echo $uid; ?>"><?php echo $uid; ?></a>
+            <?php // $t = time_distribution(LOGS_DIR.'/'.$uid.'.log')[0]; echo 60 / $t; ?>
           </li>
         <?php endforeach; ?>
       </ul>

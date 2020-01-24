@@ -30,8 +30,11 @@
       $time_percentile = percentile($all_times, $user_time);
 
       // Antti dixit: "Report WPM instead".
+      // FIXME: Remove outliers by IQR or M+2D criteria.
+      // Currently ignore users who swiped for 0.2 seconds on average,
+      // which corresponds to a typing speed of 300 WPM.
       $user_wpm = 60 / $user_time[0];
-      $all_wpms = array_map(function($v) { return 60/$v; }, $all_times);
+      $all_wpms = array_map(function($t) { return ($t > 0.2) ? 60/$t : 0; }, $all_times);
       $wpm_percentile = percentile($all_wpms, $user_wpm);
 
       $all_errors = error_distribution(LOGS_DIR.'/*.log');
