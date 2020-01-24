@@ -103,7 +103,7 @@
               var values = labels.map(function(bin) { return histogram[bin]; });
               // Display percentange of users instead of the sample size.
               var sumVal = values.reduce(function(acc, v) { return acc + v; }, 0);
-              values = values.map(function(v) { return 100 * v/sumVal; });
+              values = values.map(function(v) { return Math.round(100 * v/sumVal); });
               // Highlight user bin and display remaining bars in gray color.
               var colors = Array.apply(null, Array(values.length)).map(function(v) { return '#ccc'; });
               colors[binIndex] = binColor;
