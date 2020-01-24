@@ -113,7 +113,8 @@ function error_distribution($glob) {
         for (h in tots) {
           errsum = length(errs[h]);
           totsum = length(tots[h]);
-          print errsum / totsum;
+          e = errsum / totsum;
+          if (e < 1) print e;
         }
       }' | awk '{ sum += $1 } END { print 100*sum/NR }'; done | sort -n", $glob);
 
