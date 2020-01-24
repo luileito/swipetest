@@ -86,7 +86,10 @@ function time_distribution($glob) {
             if (t > 0 && t < 9999) print t;
           }
         }
-      }' | awk '{ sum += $1 } END { print (sum/NR)/1000 }'; done | sort -n", $glob);
+      }' | awk '{
+        obs++;
+        sum += $1;
+      } END { if (obs > %s) print (sum/NR)/1000; }'; done | sort -n", $glob, NUM_RANDOM_SENTENCES);
 
     $out = shell_exec($cmd);
     $values = explode(PHP_EOL, trim($out));
@@ -116,7 +119,10 @@ function error_distribution($glob) {
           e = errsum / totsum;
           if (e < 1) print e;
         }
-      }' | awk '{ sum += $1 } END { print 100*sum/NR }'; done | sort -n", $glob);
+      }' | awk '{
+        obs++;
+        sum += $1;
+      } END { if (obs > %s) print 100*sum/NR }'; done | sort -n", $glob, NUM_RANDOM_SENTENCES);
 
     $out = shell_exec($cmd);
     $values = explode(PHP_EOL, trim($out));
