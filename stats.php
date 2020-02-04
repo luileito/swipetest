@@ -17,9 +17,11 @@
   <body>
 
     <?php
-    // Read JSON data from users who has submitted some sentences.
-    // There are *much* more people who accessed the test but didn't submit.
-    $cmd = sprintf('find %s -name "*.log" | sed "s,.log$,.json,g" | xargs cat', LOGS_DIR);
+    // Read JSON data from users who have completed the test.
+    // There are *much* more people who accessed the test but didn't submit any sentence or just submitted a few sentences.
+    $cmd = sprintf('find %s -name "*.log" | xargs -I@ \
+      bash -c \'if [[ $(cut -d" " -f1 @ | sort -u | wc -l) -eq %d ]]; then \
+      echo @; fi\' | sed "s,.log$,.json,g" | xargs cat', LOGS_DIR, MAX_NUM_SENTENCES);
     $out = shell_exec($cmd);
     $res = explode(PHP_EOL, trim($out));
 
@@ -39,7 +41,7 @@
 
       <p>
         <b><?php _e('This is a raw dump of the server logs!'); ?></b>
-        <?php echo sprintf(_('So far, %d users submitted at least one sentence.'), count($res)); ?>
+        <?php echo sprintf(_('So far, %d users completed the test.'), count($res)); ?>
       </p>
 
       <div class="row">
