@@ -1,0 +1,22 @@
+{
+  "name": "swipetest-analysis",
+  "version": "0.0.1",
+  "description": "Swipe test analysis",
+  "main": "plotlog.js",
+  "scripts": {
+    "test": "JASMINE_CONFIG_PATH=tests/jasmine.json jasmine",
+    "docs": "jsdoc -r lib/ -d docs/"
+  },
+  "keywords": [
+    "gesture",
+    "swipe",
+    "strokes"
+  ],
+  "author": "Luis A. Leiva",
+  "license": "MIT",
+  "dependencies": {
+    "canvas": "^2.5.0",
+    "fast-csv": "^3.4.0",
+    "node-getopt": "^0.3.0"
+  }
+}
