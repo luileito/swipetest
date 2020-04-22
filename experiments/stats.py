@@ -37,11 +37,11 @@ import logparser
 from keyboard_impl import Keyboard
 
 
-enron_dataset = '../data/mem200.txt'
-rand2_dataset = '../data/dic-words-2k.txt'
-rand3_dataset = '../data/dic-words-3k.txt'
-rand5_dataset = '../data/dic-words-5k.txt'
-rand0_dataset = '../data/oov-words.txt'
+enron_dataset = './data/mem200.txt'
+rand2_dataset = './data/dic-words-2k.txt'
+rand3_dataset = './data/dic-words-3k.txt'
+rand5_dataset = './data/dic-words-5k.txt'
+rand0_dataset = './data/oov-words.txt'
 
 with open(enron_dataset) as f:
     enron_sentences = f.read().splitlines()
@@ -212,7 +212,7 @@ def chunked(rows, failed=None):
         elif row['event'] == 'touchstart':
             groups = []
             groups.append(row)
-        elif row['event'] == 'touchend':
+        elif row['event'] == 'touchend' and groups:
             # Exclude outliers.
             time_diff = groups[-1]['timestamp'] - groups[0]['timestamp']
             if time_diff > 0 and time_diff < 9999:
@@ -363,9 +363,11 @@ if __name__ == '__main__':
                 data['fail_length'] = liststats(dists)
                 data['fail_time'] = liststats(times)
 
-            # DEBUG: pretty-print only one sentence.
-            print(json.dumps(OrderedDict(sorted(data.items())), indent=2))
-            exit()
+            entry = OrderedDict(sorted(data.items()))
+
+#            # DEBUG: pretty-print only one sentence.
+#            print(json.dumps(entry, indent=2))
+#            exit()
 
             # Use ndjson as output format: one stringified json object per line.
-            print(json.dumps(data))
+            print(json.dumps(entry))
