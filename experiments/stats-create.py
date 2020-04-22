@@ -29,6 +29,7 @@ import os
 import json
 import math
 from collections import OrderedDict
+import unicodedata
 
 import numpy as np
 from fastdtw import fastdtw
@@ -75,6 +76,14 @@ def wordbin(word, sentence):
         return 'rand5k'
     elif word in rand0_words:
         return 'rand0'
+
+
+def remove_accents(text):
+    '''DEPRECATED. We should ignore users who messed up with the app.'''
+    text = unicodedata.normalize('NFD', text)
+    text = text.encode('ascii', 'ignore')
+    text = text.decode('utf-8')
+    return str(text)
 
 
 def euclidean_distance(a, b):
@@ -124,6 +133,8 @@ def swipe_path_deviation(rows):
     '''Compute point-wise difference between the user swipe and the "perfect" swipe (sokgraph).'''
     user_path = swipe_coords(rows)
     true_path = swipe_sokgraph(rows)
+    if not user_path or not true_path:
+        return None
     return dtw(user_path, true_path)
 
 
@@ -161,11 +172,19 @@ def word_keys(rows):
     kb.settings['keyHeight'] = canvas_height / kb_size['numRows']
 
     layout = kb.getLayout()
-    return [list(filter(lambda k : k['char'] == ch, layout)).pop() for ch in list(word)]
+    try:
+        # Some logs have Unicode words, which is weird because users shouldn't be able to modify the DOM.
+        # Most likely someone was messing up with the app.
+        keys = [list(filter(lambda k : k['char'] == ch.lower(), layout)).pop() for ch in list(word)]
+    except:
+        return None
+    return keys
 
 
 def word_centroids(keys):
     '''Get centroids of given list of keys. Each key is a dict.'''
+    if not keys:
+        return None
     return [key_center(k) for k in keys]
 
 
@@ -281,6 +300,9 @@ if __name__ == '__main__':
             # So we need to keep two separate, unique word lists.
             uniq_good_words = unique(success_words(rows))
             uniq_fail_words = unique(failed_words(rows))
+
+            if not uniq_good_words and not uniq_fail_words:
+                continue
 
             # Compute classic stats: WPM and WER.
             num_failed = len(uniq_fail_words)
