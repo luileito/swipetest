@@ -25,7 +25,7 @@ function load(filename) {
                       word: data[7],
                       isFailedWord: data[8] === '1',
                   }
-              } else if (data.length >== newHeaders.length) {
+              } else if (data.length >= newHeaders.length) {
                   // New format.
                   return {
                       timestamp: parseInt(data[1]),
