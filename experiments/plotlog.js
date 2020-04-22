@@ -201,7 +201,9 @@ function updateMeasures() {
     }
     // Make font size proportional to available space as well.
     // For uppercase letters, `keyWidth / 3` looks good.
-    keyboard.settings.keyFontSize = Math.min(15, Math.round(keyboard.settings.keyWidth / 3));
+    // NB: Notice that the Canvas module is different from the canvas element in browsers,
+    // so font definitions and sizes can vary slightly.
+    keyboard.settings.keyFontSize = Math.max(keyboard.settings.keyFontSize, Math.round(keyboard.settings.keyWidth / 2.5));
 }
 
 function drawKey(k, ctx) {
