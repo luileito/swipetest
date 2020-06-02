@@ -23,7 +23,7 @@ function load(filename) {
                       x: parseInt(data[5]),
                       y: parseInt(data[6]),
                       word: data[7],
-                      isFailedWord: data[8] === '1',
+                      isFailedWord: data[data.length - 1] === '1',
                   }
               } else if (data.length >= newHeaders.length) {
                   // New format.
@@ -35,7 +35,7 @@ function load(filename) {
                       x: parseInt(data[5]),
                       y: parseInt(data[6]),
                       word: data[10],
-                      isFailedWord: data[11] === '1',
+                      isFailedWord: data[data.length - 1] === '1',
                   }
               } else {
                   console.error('Unsupported row format: %d columns.', data.length);

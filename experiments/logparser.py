@@ -24,7 +24,7 @@ def load(filename):
                     'x': int(row[5]),
                     'y': int(row[6]),
                     'word': row[10],
-                    'isFailedWord': row[11] == '1',
+                    'isFailedWord': row[-1] == '1',
                 }
             else:
                 raise Exception('Unsupported row format: {} columns'.format(len(row)))
