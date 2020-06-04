@@ -79,14 +79,6 @@ def wordbin(word, sentence):
         return 'rand0'
 
 
-#def remove_accents(text):
-#    '''DEPRECATED. We should ignore users who messed up with the app.'''
-#    text = unicodedata.normalize('NFD', text)
-#    text = text.encode('ascii', 'ignore')
-#    text = text.decode('utf-8')
-#    return str(text)
-
-
 def euclidean_distance(a, b):
     '''Compute Euclidean distance between two points.'''
     # This function is used also in DTW computation, so check points format.
@@ -150,7 +142,7 @@ def dtw(seq1, seq2):
 
 def swipe_coords(rows):
     '''Get flat sequence of swipe x,y coordinates.'''
-    return [[r['x'], r['y']] for r in event_filter(rows, 'touchmove', False)]
+    return [[r['x'], r['y']] for r in rows]
 
 
 def swipe_sokgraph(rows):
@@ -196,50 +188,44 @@ def key_center(key):
     return [x_center, y_center]
 
 
-def word_filter(rows, word, failed=None):
-    '''Filter rows by word. When failed=None, BOTH success and failed words are considered.'''
-    if failed is None:
-        return list(filter(lambda r : r['word'] == word, rows))
-    return list(filter(lambda r : r['word'] == word and r['isFailedWord'] == failed, rows))
-
-
-def event_filter(rows, event, failed=None):
-    '''Filter rows by event name. When failed=None, BOTH success and failed events are considered.'''
-    if failed is None:
-        return list(filter(lambda r : r['event'] == event, rows))
-    return list(filter(lambda r : r['event'] == event and r['isFailedWord'] == failed, rows))
-
-
-def success_words(rows):
+def success_words(chunks):
     '''Get words that were entered correctly.'''
-    filtered_rows = event_filter(rows, 'touchstart', failed=False)
+    filtered_rows = [chunk[0] for chunk in chunks if not chunk[0]['isFailedWord']]
     return [row['word'] for row in filtered_rows]
 
 
-def failed_words(rows):
+def failed_words(chunks):
     '''Get words that were not swiped correctly.'''
-    filtered_rows = event_filter(rows, 'touchstart', failed=True)
+    filtered_rows = [chunk[0] for chunk in chunks if chunk[0]['isFailedWord']]
     return [row['word'] for row in filtered_rows]
 
 
 def chunked(rows, failed=None):
     '''Split rows by each of the performed swipe trajectories.'''
     chunks = []
-    groups = []
+    myrows = []
+
+    prev_word = None
+
     for row in rows:
         if failed is not None and row['isFailedWord'] != failed:
             continue
-        elif row['event'] == 'touchstart':
-            groups = []
-            groups.append(row)
-        elif row['event'] == 'touchend' and groups:
-            # Exclude clear outliers.
-            time_diff = groups[-1]['timestamp'] - groups[0]['timestamp']
-            if time_diff > 0 and time_diff < 9999:
-                chunks.append(groups)
-            groups = []
+
+        # We shouldn't rely on touchstart and touchend events since some of them were not logged.
+        # However, for failed words we need to look for touchend events,
+        # as failed words had to be resubmitted as many times as needed until getting them right.
+        if prev_word is None or row['word'] != prev_word or row['event'] == 'touchend':
+            if myrows:
+                chunks.append(myrows)
+                myrows = []
+            prev_word = row['word']
         elif row['event'] == 'touchmove':
-            groups.append(row)
+            myrows.append(row)
+
+    # Flush remaining data.
+    if myrows:
+        chunks.append(myrows)
+
     return chunks
 
 
@@ -291,10 +277,13 @@ def uid(logfile):
     return base
 
 
-def unique(sequence):
+def unique(sequence, preserve_order=True):
     '''Remove duplicates preserving the original sequence order.'''
-    seen = set()
-    return [x for x in sequence if not (x in seen or seen.add(x))]
+    if preserve_order:
+        seen = set()
+        return [x for x in sequence if not (x in seen or seen.add(x))]
+    else:
+        return list(set(sequence))
 
 
 
@@ -314,22 +303,27 @@ if __name__ == '__main__':
                 'username': uid(logfile)
             }
 
-            # Some words were entered more than once, e.g. when the swipe was wrong.
+            # Extract all swipe sequences, since there are several in each log file.
+            good_chunks = chunked(rows, failed=False)
+            fail_chunks = chunked(rows, failed=True)
+
+            good_words = success_words(good_chunks)
+            fail_words = failed_words(fail_chunks)
+
+            # Failed words were entered more than once, e.g. when the swipe was wrong.
             # So we need to keep two separate, unique word lists.
-            uniq_good_words = unique(success_words(rows))
-            uniq_fail_words = unique(failed_words(rows))
+            uniq_good_words = unique(good_words)
+            uniq_fail_words = unique(fail_words)
 
             if not uniq_good_words and not uniq_fail_words:
                 continue
 
             # Compute WER.
+            # Notice that failed words are only counted once,
+            # since they could have been entered more than once.
             num_failed = len(uniq_fail_words)
-            num_tokens = len(uniq_good_words + uniq_fail_words)
+            num_tokens = len(sentence.split('_'))
             data['wer'] = num_failed / num_tokens
-
-            # Extract all swipe sequences, since there are several in each log file.
-            good_chunks = chunked(rows, failed=False)
-            fail_chunks = chunked(rows, failed=True)
 
             # Assume that there cannot be more than 10 seconds between two swipes,
             # otherwise it should be considered an outlier observation.
@@ -344,10 +338,10 @@ if __name__ == '__main__':
             if good_t > 0:
                 good_t += sum(data['good_interval_time']['values'])
                 # Classic WPM computation.
-                good_cps = len(' '.join(uniq_good_words)) / (good_t / 1000)
+                good_cps = len(' '.join(good_words)) / (good_t / 1000)
                 data['good_wpm_classic'] = good_cps * 60 / 5
                 # Swipe-based computation.
-                data['good_wpm_swipe'] = len(uniq_good_words) / (good_t / 1000 / 60)
+                data['good_wpm_swipe'] = len(good_words) / (good_t / 1000 / 60)
             else:
                 data['good_wpm_classic'] = None
                 data['good_wpm_swipe'] = None
@@ -367,27 +361,25 @@ if __name__ == '__main__':
                 # Analyze successfully entered words separately.
                 data['good_words'], dists, times, dtws = [], [], [], []
 
-                for word in uniq_good_words:
-                    for chunk in chunked(word_filter(rows, word, failed=False)):
+                for chunk in good_chunks:
+                    word = chunk[0]['word']
+                    context = chunk[0]['sentenceHash']
 
-                        seq = event_filter(chunk, 'touchmove')
+                    swipe_len = swipe_length(chunk)
+                    swipe_t = swipe_time(chunk)
+                    dtw_dist = swipe_path_deviation(chunk)
 
-                        context = seq[0]['sentenceHash']
-                        swipe_len = swipe_length(seq)
-                        swipe_t = swipe_time(seq)
-                        dtw_dist = swipe_path_deviation(seq)
+                    dists.append(swipe_len)
+                    times.append(swipe_t)
+                    dtws.append(dtw_dist)
 
-                        dists.append(swipe_len)
-                        times.append(swipe_t)
-                        dtws.append(dtw_dist)
-
-                        data['good_words'].append({
-                            'word': word,
-                            'dataset': wordbin(word, context),
-                            'length': swipe_len,
-                            'time': swipe_t,
-                            'dtw': dtw_dist
-                        })
+                    data['good_words'].append({
+                        'word': word,
+                        'dataset': wordbin(word, context),
+                        'length': swipe_len,
+                        'time': swipe_t,
+                        'dtw': dtw_dist
+                    })
 
                 data['good_length'] = stats(dists)
                 data['good_time'] = stats(times)
@@ -397,27 +389,25 @@ if __name__ == '__main__':
                 # Analyze also wrongly entered words separately.
                 data['fail_words'], dists, times, dtws = [], [], [], []
 
-                for word in uniq_fail_words:
-                    for chunk in chunked(word_filter(rows, word, failed=True)):
+                for chunk in fail_chunks:
+                    word = chunk[0]['word']
+                    context = chunk[0]['sentenceHash']
 
-                        seq = event_filter(chunk, 'touchmove')
+                    swipe_len = swipe_length(chunk)
+                    swipe_t = swipe_time(chunk)
+                    dtw_dist = swipe_path_deviation(chunk)
 
-                        context = seq[0]['sentenceHash']
-                        swipe_len = swipe_length(seq)
-                        swipe_t = swipe_time(seq)
-                        dtw_dist = swipe_path_deviation(seq)
+                    dists.append(swipe_len)
+                    times.append(swipe_t)
+                    dtws.append(dtw_dist)
 
-                        dists.append(swipe_len)
-                        times.append(swipe_t)
-                        dtws.append(dtw_dist)
-
-                        data['fail_words'].append({
-                            'word': word,
-                            'dataset': wordbin(word, context),
-                            'length': swipe_len,
-                            'time': swipe_t,
-                            'dtw': dtw_dist
-                        })
+                    data['fail_words'].append({
+                        'word': word,
+                        'dataset': wordbin(word, context),
+                        'length': swipe_len,
+                        'time': swipe_t,
+                        'dtw': dtw_dist
+                    })
 
                 data['fail_length'] = stats(dists)
                 data['fail_time'] = stats(times)
