@@ -11,23 +11,21 @@ def load(filename):
     with open(filename) as csvfile:
         reader = csv.reader(csvfile, delimiter=' ')
         for row in reader:
-            # Some rows have more than 12 columns,
-            # but it's OK since we need to read up to the 12th column.
-            # What we can't parse are rows with _less_ than 12 columns.
-            if len(row) >= len(headers):
-                entry = {
-                    'sentenceHash': row[0],
-                    'timestamp': int(row[1]),
-                    'canvasWidth': int(row[2]),
-                    'canvasHeight': int(row[3]),
-                    'event': row[4],
-                    'x': int(row[5]),
-                    'y': int(row[6]),
-                    'word': row[10],
-                    'isFailedWord': row[-1] == '1',
-                }
-            else:
-                raise Exception('Unsupported row format: {} columns'.format(len(row)))
+
+            if len(row) != len(headers):
+                continue
+
+            entry = {
+                'sentenceHash': row[0],
+                'timestamp': int(row[1]),
+                'canvasWidth': int(row[2]),
+                'canvasHeight': int(row[3]),
+                'event': row[4],
+                'x': int(row[5]),
+                'y': int(row[6]),
+                'word': row[10],
+                'isFailedWord': row[11] == '1',
+            }
 
             # Index data by sentence, to ease later postprocessing.
             rows[row[0]].append(entry)
