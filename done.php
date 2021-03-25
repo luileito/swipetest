@@ -25,29 +25,25 @@
           $user_log_file = USER_EVENTS_FILE;
       }
 
-      $all_times = time_distribution(LOGS_DIR.'/*.log');
-      $user_time = time_distribution($user_log_file);
-      $time_percentile = percentile($all_times, $user_time);
+//      // In early pilot studies we reported swipe time instead of WPM.
+//      $all_times = time_distribution(LOGS_DIR.'/*.log');
+//      $user_time = time_distribution($user_log_file);
+//      $time_percentile = percentile($all_times, $user_time);
+//      $time_histogram = histogram($all_times, 10);
+//      $time_bin_index = find_value_in_histogram($time_histogram, $user_time);
 
-      // Antti dixit: "Report WPM instead".
-      // FIXME: Remove outliers by IQR or M+2D criteria.
-      // Currently ignore users who swiped for 0.2 seconds on average,
+      // In the actual study we reported WPM, to make it more comparable across studies.
+      // XXX: Ignore users who swiped for 0.2 seconds on average,
       // which corresponds to a typing speed of 300 WPM.
       $user_wpm = 60 / $user_time[0];
       $all_wpms = array_map(function($t) { return ($t > 0.2) ? 60/$t : 0; }, $all_times);
       $wpm_percentile = percentile($all_wpms, $user_wpm);
+      $wpm_histogram = histogram($all_wpms, 10);
+      $wpm_bin_index = find_value_in_histogram($wpm_histogram, $user_wpm);
 
       $all_errors = error_distribution(LOGS_DIR.'/*.log');
       $user_error = error_distribution($user_log_file);
       $error_percentile = percentile($all_errors, $user_error);
-
-
-      //$time_histogram = histogram($all_times, 10);
-      //$time_bin_index = find_value_in_histogram($time_histogram, $user_time);
-
-      $wpm_histogram = histogram($all_wpms, 10);
-      $wpm_bin_index = find_value_in_histogram($wpm_histogram, $user_wpm);
-
       $error_histogram = histogram($all_errors, 10);
       $error_bin_index = find_value_in_histogram($error_histogram, $user_error);
       ?>
@@ -112,25 +108,25 @@
               colors[binIndex] = binColor;
 
               var ctx = document.getElementById(elemId).getContext('2d');
-			        var plt = new Chart(ctx, {
-				          type: 'bar',
-				          data: {
-				              labels: labels.map(function(bin) { return bin.split('-').pop(); }),
-				              datasets: [{
-              				    data: values,
-              				    backgroundColor: colors,
-				              }]
-				          },
-				          options: {
-					            responsive: true,
-					            legend: {
-            					    display: false,
-					            },
-					            title: {
-    					            display: true,
-					                text: title,
-					            },
-					            tooltips: {
+              var plt = new Chart(ctx, {
+                  type: 'bar',
+                  data: {
+                      labels: labels.map(function(bin) { return bin.split('-').pop(); }),
+                      datasets: [{
+                          data: values,
+                          backgroundColor: colors,
+                      }]
+                  },
+                  options: {
+                      responsive: true,
+                      legend: {
+                          display: false,
+                      },
+                      title: {
+                          display: true,
+                          text: title,
+                      },
+                      tooltips: {
                           //enabled: false,
                       },
                       scales: {
@@ -150,8 +146,8 @@
                               },
                           }],
                       },
-				          }
-			        });
+                  }
+              });
           }
 
       });
