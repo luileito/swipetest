@@ -217,6 +217,15 @@ $(function() {
         // Draw keys.
         keyboard.getLayout(keyboardIndex).forEach(drawKey);
 
+//        // DEBUG: Draw the central key (letter g) hitTarget area.
+//        ctx.beginPath();
+//        ctx.strokeStyle = '#e00';
+//        ctx.lineWidth = 5;
+//        var radius = 2.5 * Math.max(keyboard.settings.keyWidth, keyboard.settings.keyHeight) / 2;
+//        var center = getKeyCenter(getKeyFromChar('g'));
+//        ctx.arc(center.x, center.y, radius, 0, 2 * Math.PI);
+//        ctx.stroke();
+
 //        // DEBUG: Draw keyboard bounding box, to ensure we got the layout measures right.
 //        ctx.strokeStyle = 'green';
 //        ctx.rect(keyboard.settings.offsetLeft, keyboard.settings.offsetTop, layoutSize.width, layoutSize.height);
