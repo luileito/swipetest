@@ -498,14 +498,6 @@ if (!empty($_POST)) {
         </div>
 
         <div class="form-group">
-          <?php /*
-          <div class="form-check">
-            <input class="form-check-input" type="checkbox" id="promise" required />
-            <label class="form-check-label" for="promise">
-              <?php _e('I will use the same hand(s) and finger specified above throughout the study.'); ?>
-            </label>
-          </div>
-          */ ?>
           <div class="form-check">
             <input class="form-check-input" type="checkbox" id="agree" required />
             <label class="form-check-label" for="agree">
@@ -559,15 +551,7 @@ if (!empty($_POST)) {
             for (var p in props) {
                 $('<input>').attr({ type: 'hidden', name: p, value: props[p] }).appendTo('form');
             }
-            <?php /*
-            var nav = {};
-            for (var prop in navigator) {
-                if (typeof prop !== 'function') {
-                    nav[prop] = navigator[prop];
-                }
-            }
-            $('<input>').attr({ type: 'hidden', name: 'navigator', value: JSON.stringify(nav) }).appendTo('form');
-            */ ?>
+
         });
         </script>
       </form>
