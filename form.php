@@ -12,7 +12,6 @@ if (!empty($_SERVER['HTTP_CLIENT_IP'])) {
 if (!empty($_POST)) {
     // This is the user metadata we collect for later analysis.
     $entry = array(
-        'ip' => $USER_IP,
         'gender' => filter_var($_POST['gender'], FILTER_SANITIZE_STRING),
         'age' => (int) filter_var($_POST['age'], FILTER_SANITIZE_NUMBER_INT),
         'nationality' => filter_var($_POST['nationality'], FILTER_SANITIZE_STRING),
