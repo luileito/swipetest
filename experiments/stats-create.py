@@ -77,6 +77,7 @@ def wordbin(word, sentence):
         return 'rand5k'
     elif word in rand0_words:
         return 'rand0'
+    return None
 
 
 def euclidean_distance(a, b):
@@ -300,6 +301,7 @@ if __name__ == '__main__':
             # Analyze each sentence separately.
             data = {
                 'sentence': sentence,
+                'dataset': wordbin(None, sentence),
                 'username': uid(logfile)
             }
 
