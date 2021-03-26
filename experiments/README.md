@@ -116,7 +116,7 @@ These are all the possible `group_name` and `group_value` combinations:
 | screenwidth  | small,large                           |
 | vendor       | google,apple                          |
 
-youth (<= 18), young (<=30), adult (<=40), senior (>40)
+**Note:** Age categories are youth (<= 18), young (<=30), adult (<=40), senior (>40).
 
 ### Export datasets
 
