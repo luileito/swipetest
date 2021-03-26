@@ -73,18 +73,20 @@ def print_stats(values):
 
 def check_condition(user):
     # Some conditions require manual treatment:
-    # - age:          youth (<= 18), young (<=30), adult (>30)
+    # - age:          youth (<=20), young (<=30), adult (<=40), senior (>40)
     # - language:     english, non-english
     # - nationality:  us, non-us
     # - screenwidth:  small, large
     # - vendor:       google, apple
     if args.group_name == 'age':
         age = user[args.group_name]
-        if args.group_value == 'youth' and age > 18:
+        if args.group_value == 'youth' and age > 20:
             return False
-        elif args.group_value == 'young' and (age < 19 or age > 30):
+        elif args.group_value == 'young' and (age < 20 or age > 30):
             return False
-        elif args.group_value == 'adult' and age < 30:
+        elif args.group_value == 'adult' and (age < 30 or age > 40):
+            return False
+        elif args.group_value == 'senior' and age < 40:
             return False
         return True
 
@@ -97,7 +99,10 @@ def check_condition(user):
         return True
 
     elif args.group_name == 'nationality':
-        if args.group_value == 'non-us' and user[args.group_name] == 'us':
+        country = user[args.group_name]
+        if args.group_value == 'us' and country != 'us':
+            return False
+        elif args.group_value == 'non-us' and country == 'us':
             return False
         return True
 
@@ -114,6 +119,7 @@ def check_condition(user):
             return False
         return True
 
+    # By default just check that name and value match.
     return user[args.group_name] == args.group_value
 
 
@@ -159,7 +165,7 @@ if __name__ == '__main__':
                     if not args.word_type in obj or not obj[args.word_type]:
                         continue
 
-                    # Just pick the first word and see if it comes from enron or not.
+                    # Just pick the first word and check the dataset where it comes from.
                     sentence_dataset = obj[args.word_type][0]['dataset']
                     if not sentence_dataset or not sentence_dataset.startswith(args.dataset):
                         continue
