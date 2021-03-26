@@ -7,12 +7,11 @@ from collections import defaultdict
 def load(filename):
     '''Extract useful data (in the right type) for later analysis.'''
     rows = defaultdict(list)
-    headers = ['sentenceHash', 'timestamp', 'canvasWidth', 'canvasHeight', 'event', 'x', 'y', 'rx', 'ry', 'angle', 'word', 'isFailedWord']
     with open(filename) as csvfile:
         reader = csv.reader(csvfile, delimiter=' ')
         for row in reader:
-
-            if len(row) != len(headers):
+            # Skip ill-formed logs.
+            if len(row) < 12 or row[11] not in ['0','1']:
                 continue
 
             entry = {

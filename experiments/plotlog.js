@@ -63,19 +63,14 @@ function main(data) {
     csvContent = data;
 
     // Since we want to draw only one word, ignore the rest.
-    csvContent = csvContent.filter(row => row.word === args.word);
-
-    if (args.failed) {
-        csvContent = csvContent.filter(row => row.isFailedWord);
-    }
+    csvContent = csvContent.filter(row => row.word === args.word && row.isFailedWord === !!args.failed);
 
     if (!csvContent.length) {
-        console.error('Word %s not found in %s with "failed %s" condition.', args.word, args.logFile, args.failed);
-        process.exit(1);
+        console.error('Word "%s" (failed: %s) not found in %s', args.word, !!args.failed, args.logFile);
+        throw new Error('Please revise your CLI arguments.');
     }
 
     var numWords = countWords();
-    console.log('numWords:', numWords)
     if (numWords > 1) {
         console.warn('Multiple swiping attempts (%d) of word "%s" detected. Will plot the last attempt only.', numWords, args.word);
     }

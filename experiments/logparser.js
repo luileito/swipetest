@@ -5,41 +5,30 @@ var fs    = require("fs")
   , csv   = require("fast-csv")
   ;
 
+function is_flag(val) {
+    return val === '0' || val === '1';
+}
+
 function load(filename) {
-    var oldHeaders = ['sentenceHash', 'timestamp', 'canvasWidth', 'canvasHeight', 'event', 'x', 'y', 'word', 'isFailedWord'];
-    var newHeaders = ['sentenceHash', 'timestamp', 'canvasWidth', 'canvasHeight', 'event', 'x', 'y', 'rx', 'ry', 'angle', 'word', 'isFailedWord'];
     var csvContent = [];
     return new Promise(function(resolve, reject) {
         fs.createReadStream(filename)
           .pipe(csv.parse({ headers: false, delimiter: ' ' }))
-          .transform(data => {
-              if (data.length === oldHeaders.length) {
-                  // Old format. DEPRECATED!
-                  return {
-                      timestamp: parseInt(data[1]),
-                      canvasWidth: parseInt(data[2]),
-                      canvasHeight: parseInt(data[3]),
-                      event: data[4],
-                      x: parseInt(data[5]),
-                      y: parseInt(data[6]),
-                      word: data[7],
-                      isFailedWord: data[data.length - 1] === '1',
-                  }
-              } else if (data.length >= newHeaders.length) {
-                  // New format.
-                  return {
-                      timestamp: parseInt(data[1]),
-                      canvasWidth: parseInt(data[2]),
-                      canvasHeight: parseInt(data[3]),
-                      event: data[4],
-                      x: parseInt(data[5]),
-                      y: parseInt(data[6]),
-                      word: data[10],
-                      isFailedWord: data[data.length - 1] === '1',
-                  }
+          .transform(row => {
+              // Skip ill-formed logs.
+              if (row.length < 12 || !is_flag(row[11])) {
+                  // continue
               } else {
-                  console.error('Unsupported row format: %d columns.', data.length);
-                  process.exit(1);
+                  return {
+                      timestamp: parseInt(row[1]),
+                      canvasWidth: parseInt(row[2]),
+                      canvasHeight: parseInt(row[3]),
+                      event: row[4],
+                      x: parseInt(row[5]),
+                      y: parseInt(row[6]),
+                      word: row[10],
+                      isFailedWord: row[11] === '1',
+                  }
               }
           })
           .on('data', row => {
