@@ -10,7 +10,7 @@ You need Python >= 3 and NodeJS >= 10 interpreters.
 
 ## Usage
 
-### Demographics and user metadata
+### Process demographics (user metadata)
 
 Create a consolidated file where each line describes each user:
 ```sh
@@ -34,23 +34,28 @@ Options:
   -h, --help        Display this help
 ```
 
-Example: assuming that the word "hello" is in `somefile.log` file:
+Example: assuming that the word "hello" is in `somefile.log` file,
+this will create the file `somefile-hello-0.png`:
 ```sh
 ~$ node plotlog.js -l /path/to/somefile.log -w hello
 ```
 
-## Process performance metrics
+The output filename pattern in always "username-word-flag.png", where "username" is the user ID (swipe log filename), "word" is the swiped word, and "flag" is either 0 (default) or 1 if the argument `-f` (or `--failed`) is provided.
 
-The `stats-create.py` program create a consolidated file where each line summarizes both sentence and word level performance.
+### Process performance metrics
+
+The `stats-create.py` program create a consolidated file where each line is a dictionary summarizing both sentence and word level performance.
 
 Example:
 ```sh
 ~$ python3 stats-create.py /path/to/swipelogs/*.log > swipelogs.ndjson
 ```
 
+Read more about the ndjson format at http://ndjson.org/
+
 ### Analyze performance metrics
 
-The `stats-analyze.py` program is fairly complete.
+The `stats-analyze.py` program creates fine-grained performance reports.
 
 ```sh
 ~$ python3 stats-analyze.py -h
@@ -76,20 +81,67 @@ optional arguments:
                         word type
 ```
 
-Examples:
+Example: analyze all swiped words:
 ```sh
 ~$ python3 stats-analyze.py \
       --stats_file swipelogs.ndjson \
       --users_file metadata.tsv \
       --word_type good_words \
-      --metric time >> good_words-time.dat
+      --metric time > good_words-time-overall.dat
+```
 
+Example: analyze swipe time by users who are not familiarized with shape-writing:
+```sh
 ~$ python3 stats-analyze.py \
       --stats_file swipelogs.ndjson \
       --users_file metadata.tsv \
       --group_name familiarity \
       --group_value never \
-      --group_name vendor \
-      --group_value apple \
-      --metric time > sentences-time-familiarity_never-vendor_apple.dat
+      --metric time > sentences-time-familiarity_never.dat
 ```
+
+These are all the possible `group_name` and `group_value` combinations:
+
+| group_name   | group_value                           |
+|---           |---                                    |
+| familiarity  | everyday,often,sometimes,rarely,never |
+| gender       | male,female,other                     |
+| age          | youth,young,adult,senior              |
+| language     | english,non-english                   |
+| nationality  | us,non-us                             |
+| englishlevel | native,advanced,intermediate,beginner |
+| dominanthand | left,right                            |
+| swipehand    | left,right,both                       |
+| swipefinger  | index,thumb,other                     |
+| screenwidth  | small,large                           |
+| vendor       | google,apple                          |
+
+youth (<= 18), young (<=30), adult (<=40), senior (>40)
+
+### Export datasets
+
+The `db-export.py` file creates normalized datasets.
+This is what we used to generate the processed data files in https://github.com/luileito/swipedataset
+
+```sh
+$ python3 db-export.py -h
+usage: db-export.py [-h] [--stats_file STATS_FILE] [--users_file USERS_FILE] [--format {ndjson,tsv}] [--prefix PREFIX]
+
+Export swipe datasets.
+
+optional arguments:
+  -h, --help            show this help message and exit
+  --stats_file STATS_FILE
+                        path to computed stats file
+  --users_file USERS_FILE
+                        path to user demographics file
+  --format {ndjson,tsv}
+                        database storage format
+  --prefix PREFIX       database name prefix
+```
+
+Example:
+```sh
+~$ python3 db-export.py --stats_file swipelogs.ndjson --users_file metadata.tsv --prefix raw_
+```
+This will create 3 files: `raw_demographics.tsv`, `raw_words.tsv`, `raw_sentences.tsv`.
