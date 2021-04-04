@@ -15,10 +15,9 @@ if ($_SESSION['condition'] == 'RANDOM' && $_SESSION['rand_count'] == NUM_RANDOM_
 // Ensure that the user enters the expected number of random sentences.
 $max_memorable_sentences = MAX_NUM_SENTENCES - NUM_RANDOM_SENTENCES;
 $done_memorable = $_SESSION['done_count'] - $_SESSION['rand_count'];
-if ($condition == 'MEMORABLE' && $done_memorable == $max_memorable_sentences) {
+if ($_SESSION['condition'] == 'MEMORABLE' && $done_memorable == $max_memorable_sentences) {
     $_SESSION['condition'] = 'RANDOM';
 }
-
 
 if ($_SESSION['condition'] == 'RANDOM') {
     // Present the user with 4-word sentences, where there is always:
@@ -44,10 +43,20 @@ if ($_SESSION['condition'] == 'RANDOM') {
     // e.g. if the last token is always the OOV, the user might write it without effort
     // since s/he already entered 3 words and thus has some "inertia".
     shuffle($tokens);
+    // Hash sentence by joining words using underscores.
+    // Another option would be to save the sentence as it was shown and use TAB as CSV delimiter.
+    $txt_hash = implode('_', $tokens);
+
 } elseif ($_SESSION['condition'] == 'MEMORABLE') {
     // User sentences are stored as sha1 hashes.
-    $hash_sentences = file(USER_SENTENCES_FILE, FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES);
+    // This file doesn't exist until the user submits one sentence.
+    if (file_exists(USER_SENTENCES_FILE)) {
+        $hash_sentences = file(USER_SENTENCES_FILE, FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES);
+    } else {
+        $hash_sentences = array();
+    }
     // All sentences are assumed to be lowercased, no punctuation, no numbers.
+    // This file is already in the repository.
     $data_sentences = file(DATA_SENTENCES_FILE, FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES);
 
     // Pick a sentence at random, ensuring it hasn't been already entered.
@@ -56,20 +65,15 @@ if ($_SESSION['condition'] == 'RANDOM') {
     do {
         $rand_idx = rand(0, count($data_sentences) - 1);
         $sentence = $data_sentences[$rand_idx];
+        // We could do some preprocessing here,
+        // but it's better to display the dataset as it is.
+        // Actually, we removed punctuation symbols and excluded sentences with numbers.
+        $tokens = explode(' ', $sentence);
+        $txt_hash = implode('_', $tokens);
     } while (in_array($txt_hash, $hash_sentences) && count($hash_sentences) < count($data_sentences));
-
-    // We could do some preprocessing here,
-    // but it's better to display the dataset as it is.
-    // Actually, we removed punctuation symbols and excluded sentences with numbers.
-    // Should we lowercase all sentences as well?
-    $tokens = explode(' ', $sentence);
 } else {
     // Condition not implemented.
 }
-
-// Hash sentence by joining words using underscores.
-// Another option would be to save the sentence as it was shown and use TAB as CSV delimiter.
-$txt_hash = implode('_', $tokens);
 
 if (isset($_GET['debug'])) var_dump($_SESSION['condition'], $_SESSION['done_count'], $_SESSION['rand_count']);
 ?>
