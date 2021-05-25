@@ -12,14 +12,14 @@ You need Python >= 3 and NodeJS >= 10 interpreters.
 
 ### Process demographics (user metadata)
 
-Create a consolidated file where each line describes each user:
+The `demographics.py` file creates a consolidated file where each line describes each user:
 ```sh
 ~$ python3 demographics.py /path/to/swipelogs/*.json > metadata.tsv
 ```
 
 ### Plot swiped words
 
-The `plotlog.js` file render a swipe trajectory as a PNG file.
+The `plotlog.js` file renders a swipe trajectory as a PNG file.
 
 ```sh
 ~$ node plotlog.js -h
@@ -44,7 +44,7 @@ The output filename pattern in always "username-word-flag.png", where "username"
 
 ### Process performance metrics
 
-The `stats-create.py` program create a consolidated file where each line is a dictionary summarizing both sentence and word level performance.
+The `stats-create.py` program creates a consolidated file where each line is a dictionary summarizing both sentence and word level performance.
 
 Example:
 ```sh

@@ -8,7 +8,8 @@ This is the source code of the typing test application of our MobileHCI'21 paper
 
 Our online test prompts each user with 16 short sentences.
 The first sentence is a warm-up sentence which is not logged.
-The user has to enter each sentence by swiping on a custom virtual keyboard that logs low-level information about gesture typing, such as the gesture path drawn on top of the keyboard or the time lapsed between consecutively swiped keys.
+The user has to enter each sentence by swiping on a custom virtual keyboard that logs low-level information about gesture typing, 
+such as the gesture path drawn on top of the keyboard or the time lapsed between consecutively swiped keys.
 
 
 ## Install
