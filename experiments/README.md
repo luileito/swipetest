@@ -2,7 +2,7 @@
 
 Here you can find several programs we used to process the swipe log files.
 
-You can get the log files at https://github.com/luileito/swipedataset
+You can get the log files at https://osf.io/sj67f/
 
 ## Install
 
@@ -121,7 +121,7 @@ These are all the possible `group_name` and `group_value` combinations:
 ### Export datasets
 
 The `db-export.py` file creates normalized datasets.
-This is what we used to generate the processed data files in https://github.com/luileito/swipedataset
+This is what we used to generate the processed data files (TSV extension) in https://osf.io/sj67f/
 
 ```sh
 $ python3 db-export.py -h
