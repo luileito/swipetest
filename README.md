@@ -14,11 +14,13 @@ such as the gesture path drawn on top of the keyboard or the time lapsed between
 
 ## Install
 
+Windows OS is not supported.
+
 You need PHP >= 5 and a web server (we highly recommend nginx).
 
 You can test the application with the built-in php server, but it should NOT be used in production:
 ```sh
-~$ php -S http://localhost:8088
+~$ php -S localhost:8088
 ```
 
 
