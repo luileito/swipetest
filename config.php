@@ -295,6 +295,9 @@ function gettext_get_language($os_locales) {
     if (isset($_GET['hl'])) {
         // Change language via URL param.
         $lc_iso = filter_var($_GET['hl'], FILTER_SANITIZE_STRING);
+    } elseif (isset($_SESSION['hl'])) {
+        // Change language in current session.
+        $lc_iso = $_SESSION['hl'];
     } elseif (isset($_COOKIE['hl'])) {
         // Change language via cookie.
         $lc_iso = $_COOKIE['hl'];
