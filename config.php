@@ -236,3 +236,105 @@ function find_value_in_histogram($histogram, $value) {
     }
     return $bin_index;
 }
+
+/**
+ * Find prefix in string.
+ * @param {string} $source Input string.
+ * @param {string} $prefix Prefix to search for.
+ * @return {bool}
+ */
+function str_starts_with($source, $prefix) {
+    return strncmp($source, $prefix, strlen($prefix)) == 0;
+}
+
+/**
+ * Set translation domain path, relative to current app's dir.
+ * @param {string} $domain Translation domain; e.g. "messages".
+ * @return {bool}
+ */
+function gettext_load_domain($domain) {
+    // Load translations from the `locale` dir.
+    $lc_dir = __DIR__ . '/locale';
+
+    $res = bindtextdomain($domain, $lc_dir);
+    if (!$res) {
+        trigger_error(sprintf('Could not load "%s" domain codeset from %s', $domain, $lc_dir));
+        return FALSE;
+    }
+
+    // It is important to specify the encoding. Must match that of the PO file.
+    $res = bind_textdomain_codeset($domain, 'UTF-8');
+    if (!$res) {
+        trigger_error('Could not bind "%s" domain codeset. Is it installed?');
+        return FALSE;
+    }
+
+    return TRUE;
+}
+
+if (!function_exists('locale_accept_from_http')) {
+    function locale_accept_from_http($header) {
+        return 'en_US';
+    }
+}
+
+/**
+ * Read the preferred user's language locale.
+ * @return {string}
+ */
+function gettext_get_language() {
+    $lc_iso = NULL;
+
+    // Read user's language from different sources.
+    if (isset($_GET['hl'])) {
+        // Change language via URL param.
+        $lc_iso = filter_var($_GET['hl'], FILTER_SANITIZE_STRING);
+    } elseif (isset($_COOKIE['hl'])) {
+        // Change language via cookie.
+        $lc_iso = $_COOKIE['hl'];
+    } elseif (isset($_SERVER['HTTP_ACCEPT_LANGUAGE'])) {
+        // Change language via HTTP lang header.
+        $lc_iso = locale_accept_from_http($_SERVER['HTTP_ACCEPT_LANGUAGE']);
+    } else {
+        // Fallback language.
+        $lc_iso = 'en_US';
+    }
+
+    return $lc_iso;
+}
+
+/**
+ * Apply user interface translations based on a given locale.
+ * @param {string} $lc_iso Language locale.
+ * @return {bool}
+ */
+function gettext_apply_translations($lc_iso) {
+    if (!$lc_iso) {
+        trigger_error('Cannot translate from an empty locale.');
+        return FALSE;
+    }
+
+    // NB: Apparently Windows servers need *both* `setlocale()` and `putenv()`,
+    // but our application requires a Unix-based OS so we don't need to call `putenv()`.
+    $res = setlocale(LC_MESSAGES, $lc_iso);
+    if (!$res) {
+        trigger_error(sprintf('Could not set the "%s" locale. Is it installed?', $lc_iso));
+        return FALSE;
+    }
+
+    // Indicate the name of the MO file, without extension.
+    $domain = 'messages';
+    gettext_load_domain($domain);
+
+    // Set default domain for the gettext function.
+    $res = textdomain($domain);
+    if (!$res) {
+        trigger_error(sprintf('Could not set "%s" as default domain. Does it exist?', $domain));
+        return FALSE;
+    }
+
+    return TRUE;
+}
+
+$lc_iso = gettext_get_language();
+gettext_apply_translations($lc_iso);
