@@ -15,6 +15,7 @@ such as the gesture path drawn on top of the keyboard or the time lapsed between
 ## Install
 
 Windows OS is not supported.
+A Unix-like OS is expected with GNU awk installed. In Debian-based Linux distributions you can run `sudo apt install gawk`.
 
 You need PHP >= 5 and a web server (we highly recommend nginx).
 
@@ -23,6 +24,7 @@ You can test the application with the built-in php server, but it should NOT be 
 ~$ php -S localhost:8088
 ```
 
+To translate the user interface, GNU gettext is required. In Debian-based Linux distributions you can run `sudo apt install gettext`.
 
 ## Citation
 
