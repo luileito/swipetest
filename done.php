@@ -94,8 +94,8 @@
           var errorHistogram = <?php echo json_encode($error_histogram); ?>;
           var errorBinIndex = <?php echo $error_bin_index; ?>;
 
-          plot('speed-chart', speedHistogram, speedBinIndex, '#3f9', 'Words per minute, higher is better');
-          plot('error-chart', errorHistogram, errorBinIndex, '#f93', 'Word error rate, lower is better');
+          plot('speed-chart', speedHistogram, speedBinIndex, '#3f9', "<?php _e('Words per minute, higher is better'); ?>");
+          plot('error-chart', errorHistogram, errorBinIndex, '#f93', "<?php _e('Word error rate, lower is better'); ?>");
 
           function plot(elemId, histogram, binIndex, binColor, title) {
               var labels = Object.keys(histogram);
@@ -136,7 +136,7 @@
                               },
                               scaleLabel: {
                                   display: true,
-                                  labelString: '% of participants'
+                                  labelString: "<?php _e('% of participants'); ?>"
                               }
                           }],
                           xAxes: [{

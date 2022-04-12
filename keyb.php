@@ -98,7 +98,7 @@ if (isset($_GET['debug'])) var_dump($_SESSION['condition'], $_SESSION['done_coun
         </p>
         <p class="instructions">
           <b><?php echo sprintf(_('%s more sentences to go!'), NUM_TODO_SENTENCES); ?></b>
-          <a href="#feedback">Report an issue</a>
+          <a href="#feedback"><?php _e('Report an issue'); ?></a>
 
           <br />
 
