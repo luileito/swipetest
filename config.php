@@ -62,9 +62,10 @@ function _e($msg) {
  * Compute time distribution, aggregated (averaged) by user;
  * i.e. each data point is the mean time each user took to swipe all words.
  * @param {string} $glob Glob pattern to expand.
+ * @param {int} $min_obs Minimum number of sentences per user to show results. Otherwise the user will be ignored.
  * @return {array}
  */
-function time_distribution($glob) {
+function time_distribution($glob, $min_obs = 1) {
     // Notice that users can enter the same sentence in different sessions,
     // so only the latest (non-failed) entry will be considered.
     // NB: Each row in a log file has the following format:
@@ -89,7 +90,7 @@ function time_distribution($glob) {
       }' | awk '{
         obs++;
         sum += $1;
-      } END { if (obs > %s) print (sum/NR)/1000; }'; done | sort -n", $glob, NUM_RANDOM_SENTENCES);
+      } END { if (obs > %s) print (sum/NR)/1000; }'; done | sort -n", $glob, $min_obs);
 
     $out = shell_exec($cmd);
     $values = explode(PHP_EOL, trim($out));
@@ -100,9 +101,10 @@ function time_distribution($glob) {
  * Compute word error distribution, aggregated (averaged) by user;
  * i.e. each data point is the mean word error per sentence.
  * @param {string} $glob Glob pattern to expand.
+ * @param {int} $min_obs Minimum number of sentences per user to show results. Otherwise the user will be ignored.
  * @return {array}
  */
-function error_distribution($glob) {
+function error_distribution($glob, $min_obs = 1) {
     // We count errors on a per-word basis, i.e. if the user swiped several
     // times the same word in a row, then only one error is considered.
     // NB: Each row in a log file has the following format:
@@ -122,7 +124,7 @@ function error_distribution($glob) {
       }' | awk '{
         obs++;
         sum += $1;
-      } END { if (obs > %s) print 100*sum/NR }'; done | sort -n", $glob, NUM_RANDOM_SENTENCES);
+      } END { if (obs > %s) print 100*sum/NR }'; done | sort -n", $glob, $min_obs);
 
     $out = shell_exec($cmd);
     $values = explode(PHP_EOL, trim($out));
