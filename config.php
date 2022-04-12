@@ -364,7 +364,9 @@ $lc_iso = gettext_get_language(AVAILABLE_LOCALES);
 gettext_apply_translations($lc_iso);
 
 // Set user language, for the app markup.
-define('LOCALE_APP', $lc_iso);
+// NB: In HTML we must use a dash separator instead of an underscore.
+preg_match('/(?P<locale>[a-z]+)_(?P<country>[A-Z]+).*/', $lc_iso, $lang);
+define('LOCALE_APP', sprintf('%s-%s', $lang['locale'], $lang['country']));
 // Set language directionality, for the app markup as well.
 // Possible values are: "ltr", "rtl" or "auto".
 define('LOCALE_DIR', 'auto');
