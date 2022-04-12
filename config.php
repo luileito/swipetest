@@ -353,5 +353,12 @@ function gettext_apply_translations($lc_iso) {
     return TRUE;
 }
 
+// Translate app accordingly.
 $lc_iso = gettext_get_language(AVAILABLE_LOCALES);
 gettext_apply_translations($lc_iso);
+
+// Set user language, for the app markup.
+define('LOCALE_APP', $lc_iso);
+// Set language directionality, for the app markup as well.
+// Possible values are: "ltr", "rtl" or "auto".
+define('LOCALE_DIR', 'auto');
