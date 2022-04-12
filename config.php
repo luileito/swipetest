@@ -149,6 +149,12 @@ function find_position($values, $value) {
     return $index;
 }
 
+/**
+ * Compute percentile of a given value within a list of values.
+ * @param {array} $values Distribution of values.
+ * @param {float} $value Value to compute its percentile.
+ * @return {float}
+ */
 function percentile($values, $value) {
     $index = find_position($values, $value);
     $tally = ($index + 1) / count($values);
