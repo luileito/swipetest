@@ -312,7 +312,7 @@ function gettext_get_language($os_locales) {
         $lc_iso = locale_accept_from_http($_SERVER['HTTP_ACCEPT_LANGUAGE']);
     } else {
         // Fallback language.
-        $lc_iso = 'en';
+        $lc_iso = 'en_US';
     }
 
     // Now look at the actually available locales in the OS.
@@ -322,6 +322,9 @@ function gettext_get_language($os_locales) {
             break;
         }
     }
+
+    // Fallback to default locale, if none found.
+    if (!$lc_actual) return $lc_iso;
 
     return $lc_actual;
 }
