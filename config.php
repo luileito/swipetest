@@ -45,6 +45,10 @@ define('NUM_TRIAL_SENTENCES', 1);
 define('MAX_EST_MINUTES', 5);
 // When there are no more sentences to display, the user will be shown the "done" view.
 define('NUM_TODO_SENTENCES', MAX_NUM_SENTENCES + NUM_TRIAL_SENTENCES - $_SESSION['done_count']);
+// Supported language locales in your OS. You can run `locale -a` to see the list.
+// New locales must be installed via `locale-gen` followed by `update-locale`.
+// Example: `sudo locale-gen es_ES.UTF-8 && sudo update-locale`.
+define('AVAILABLE_LOCALES', array('es_ES.utf8', 'fi_FI.utf8', 'de_DE.utf8', 'fr_FR.utf8', 'it_IT.utf8'));
 
 // Ensure that dirs exist.
 if (!file_exists(DATA_DIR)) die(sprintf(_('Not found: %s'), DATA_DIR));
@@ -252,7 +256,7 @@ function str_starts_with($source, $prefix) {
  * @param {string} $domain Translation domain; e.g. "messages".
  * @return {bool}
  */
-function gettext_load_domain($domain) {
+function gettext_load_domain($domain, $encoding = 'UTF-8') {
     // Load translations from the `locale` dir.
     $lc_dir = __DIR__ . '/locale';
 
@@ -263,7 +267,7 @@ function gettext_load_domain($domain) {
     }
 
     // It is important to specify the encoding. Must match that of the PO file.
-    $res = bind_textdomain_codeset($domain, 'UTF-8');
+    $res = bind_textdomain_codeset($domain, $encoding);
     if (!$res) {
         trigger_error('Could not bind "%s" domain codeset. Is it installed?');
         return FALSE;
@@ -280,10 +284,12 @@ if (!function_exists('locale_accept_from_http')) {
 
 /**
  * Read the preferred user's language locale.
+ * @param {array}
  * @return {string}
  */
-function gettext_get_language() {
+function gettext_get_language($os_locales) {
     $lc_iso = NULL;
+    $lc_actual = NULL;
 
     // Read user's language from different sources.
     if (isset($_GET['hl'])) {
@@ -297,7 +303,7 @@ function gettext_get_language() {
         $lc_iso = locale_accept_from_http($_SERVER['HTTP_ACCEPT_LANGUAGE']);
     } else {
         // Fallback language.
-        $lc_iso = 'en_US';
+        $lc_iso = 'en';
     }
 
     // Now look at the actually available locales in the OS.
@@ -344,5 +350,5 @@ function gettext_apply_translations($lc_iso) {
     return TRUE;
 }
 
-$lc_iso = gettext_get_language();
+$lc_iso = gettext_get_language(AVAILABLE_LOCALES);
 gettext_apply_translations($lc_iso);
