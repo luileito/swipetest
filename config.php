@@ -300,7 +300,15 @@ function gettext_get_language() {
         $lc_iso = 'en_US';
     }
 
-    return $lc_iso;
+    // Now look at the actually available locales in the OS.
+    foreach ($os_locales as $lcid) {
+        if (str_starts_with($lcid, $lc_iso)) {
+            $lc_actual = $lcid;
+            break;
+        }
+    }
+
+    return $lc_actual;
 }
 
 /**
