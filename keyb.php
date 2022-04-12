@@ -78,7 +78,7 @@ if ($_SESSION['condition'] == 'RANDOM') {
 if (isset($_GET['debug'])) var_dump($_SESSION['condition'], $_SESSION['done_count'], $_SESSION['rand_count']);
 ?>
 <!doctype html>
-<html>
+<html lang="<?php echo LOCALE_APP; ?>" dir="<?php echo LOCALE_DIR; ?>">
   <head>
     <meta name="viewport" content="width=device-width, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no" />
     <link rel="stylesheet" type="text/css" href="css/bootstrap.min.css?v=<?php echo VERSION; ?>" />

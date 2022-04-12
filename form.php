@@ -43,7 +43,7 @@ if (!empty($_POST)) {
 }
 ?>
 <!doctype html>
-<html>
+<html lang="<?php echo LOCALE_APP; ?>" dir="<?php echo LOCALE_DIR; ?>">
   <head>
     <meta name="viewport" content="width=device-width, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no" />
     <link rel="stylesheet" type="text/css" href="css/bootstrap.min.css" />
