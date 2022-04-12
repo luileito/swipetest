@@ -24,7 +24,12 @@ You can test the application with the built-in php server, but it should NOT be 
 ~$ php -S localhost:8088
 ```
 
+## Translate
+
 To translate the user interface, GNU gettext is required. In Debian-based Linux distributions you can run `sudo apt install gettext`.
+
+You can run `translate.sh` to handle the whole translation process in one command.
+Example: To translate the app to Spanish, run `bash translate.sh es_ES`, then edit the generated `locale/es_ES/messages.po` file with your Spanish translations and finally run `bash translate.sh es_ES` again to update the app. You must restart/reload your web server afterwards.
 
 ## Citation
 
