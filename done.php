@@ -25,12 +25,12 @@
           $user_log_file = USER_EVENTS_FILE;
       }
 
-//      // In early pilot studies we reported swipe time instead of WPM.
-//      $all_times = time_distribution(LOGS_DIR.'/*.log');
-//      $user_time = time_distribution($user_log_file);
-//      $time_percentile = percentile($all_times, $user_time);
-//      $time_histogram = histogram($all_times, 10);
-//      $time_bin_index = find_value_in_histogram($time_histogram, $user_time);
+      // In early pilot studies we reported swipe time instead of WPM.
+      $all_times = time_distribution(LOGS_DIR.'/*.log');
+      $user_time = time_distribution($user_log_file);
+      $time_percentile = percentile($all_times, $user_time);
+      $time_histogram = histogram($all_times, 10);
+      $time_bin_index = find_value_in_histogram($time_histogram, $user_time);
 
       // In the actual study we reported WPM, to make it more comparable across studies.
       // XXX: Ignore users who swiped for 0.2 seconds on average,
