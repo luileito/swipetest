@@ -23,7 +23,7 @@
       bash -c \'if [[ $(cut -d" " -f1 @ | sort -u | wc -l) -eq %d ]]; then \
       echo @; fi\' | sed "s,.log$,.json,g" | xargs cat', LOGS_DIR, MAX_NUM_SENTENCES);
     $out = shell_exec($cmd);
-    $res = explode(PHP_EOL, trim($out));
+    $res = $out? explode(PHP_EOL, trim($out)) : array();
 
     $fields = array('gender', 'age', 'nationality', 'englishLevel', 'familiarity', 'dominantHand', 'swipeHand', 'swipeFinger', 'maxTouchPoints', 'platform', 'vendor');
     $bucket = array();

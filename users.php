@@ -13,7 +13,7 @@
       <?php
       $cmd = sprintf('find %s -name "*.log" | while read f; do echo $(date -r $f "+%%Y-%%m-%%d") $(basename $f .log); done | sort -rn', LOGS_DIR);
       $out = shell_exec($cmd);
-      $res = explode(PHP_EOL, trim($out));
+      $res = $out ? explode(PHP_EOL, trim($out)) : array();
       ?>
 
       <h3><?php _e('Participants'); ?></h3>
