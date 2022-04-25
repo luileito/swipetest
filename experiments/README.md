@@ -44,22 +44,22 @@ The output filename pattern in always "username-word-flag.png", where "username"
 
 ### Process performance metrics
 
-The `stats-create.py` program creates a consolidated file where each line is a dictionary summarizing both sentence and word level performance.
+The `stats_create.py` program creates a consolidated file where each line is a dictionary summarizing both sentence and word level performance.
 
 Example:
 ```sh
-~$ python3 stats-create.py /path/to/swipelogs/*.log > swipelogs.ndjson
+~$ python3 stats_create.py /path/to/swipelogs/*.log > swipelogs.ndjson
 ```
 
 Read more about the ndjson format at http://ndjson.org/
 
 ### Analyze performance metrics
 
-The `stats-analyze.py` program creates fine-grained performance reports.
+The `stats_analyze.py` program creates fine-grained performance reports.
 
 ```sh
-~$ python3 stats-analyze.py -h
-usage: stats-analyze.py [-h] --metric METRIC --stats_file STATS_FILE [--users_file USERS_FILE] [--group_name GROUP_NAME] [--group_value GROUP_VALUE] [--header] [--dataset {enron,rand,rand2k,rand3k,rand5k,rand0}] [--word_type {good_words,fail_words}]
+~$ python3 stats_analyze.py -h
+usage: stats_analyze.py [-h] --metric METRIC --stats_file STATS_FILE [--users_file USERS_FILE] [--group_name GROUP_NAME] [--group_value GROUP_VALUE] [--header] [--dataset {enron,rand,rand2k,rand3k,rand5k,rand0}] [--word_type {good_words,fail_words}]
 
 Analyze ndjon-based swipe dataset.
 
@@ -83,7 +83,7 @@ optional arguments:
 
 Example: analyze all swiped words:
 ```sh
-~$ python3 stats-analyze.py \
+~$ python3 stats_analyze.py \
       --stats_file swipelogs.ndjson \
       --users_file metadata.tsv \
       --word_type good_words \
@@ -92,7 +92,7 @@ Example: analyze all swiped words:
 
 Example: analyze swipe time by users who are not familiarized with shape-writing:
 ```sh
-~$ python3 stats-analyze.py \
+~$ python3 stats_analyze.py \
       --stats_file swipelogs.ndjson \
       --users_file metadata.tsv \
       --group_name familiarity \
@@ -120,12 +120,12 @@ These are all the possible `group_name` and `group_value` combinations:
 
 ### Export datasets
 
-The `db-export.py` file creates normalized datasets.
+The `db_export.py` file creates normalized datasets.
 This is what we used to generate the processed data files (TSV extension) in https://osf.io/sj67f/
 
 ```sh
-$ python3 db-export.py -h
-usage: db-export.py [-h] [--stats_file STATS_FILE] [--users_file USERS_FILE] [--format {ndjson,tsv}] [--prefix PREFIX]
+$ python3 db_export.py -h
+usage: db_export.py [-h] [--stats_file STATS_FILE] [--users_file USERS_FILE] [--format {ndjson,tsv}] [--prefix PREFIX]
 
 Export swipe datasets.
 
@@ -142,6 +142,6 @@ optional arguments:
 
 Example:
 ```sh
-~$ python3 db-export.py --stats_file swipelogs.ndjson --users_file metadata.tsv --prefix raw_
+~$ python3 db_export.py --stats_file swipelogs.ndjson --users_file metadata.tsv --prefix raw_
 ```
 This will create 3 files: `raw_demographics.tsv`, `raw_words.tsv`, `raw_sentences.tsv`.
