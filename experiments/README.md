@@ -42,6 +42,16 @@ this will create the file `somefile-hello-0.png`:
 
 The output filename pattern in always "username-word-flag.png", where "username" is the user ID (swipe log filename), "word" is the swiped word, and "flag" is either 0 (default) or 1 if the argument `-f` (or `--failed`) is provided.
 
+### Export swiped trajectories
+
+The `trajectories.py` program outputs a JSON line per each swiped word trajectories with the following properties: `username`, `word`, `swipe`.
+The `swipe` property is a list of (x,y,time) tuples.
+
+Example:
+```sh
+~$ python3 trajectories.py /path/to/swipelogs/*.log > swipes.ndjson
+```
+
 ### Process performance metrics
 
 The `stats_create.py` program creates a consolidated file where each line is a dictionary summarizing both sentence and word level performance.
